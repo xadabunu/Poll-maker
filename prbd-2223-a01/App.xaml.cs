@@ -12,7 +12,7 @@ public partial class App : ApplicationBase<User, MyPollContext> {
 
     private static void PrepareDatabase() {
         // Clear database and seed data
-        Context.Database.EnsureDeleted();
+        //Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
 
         // Cold start
@@ -25,14 +25,14 @@ public partial class App : ApplicationBase<User, MyPollContext> {
 
         //var q = Context.Users.Where(u => u.Comments.Any(c => c.Poll.Creator.FullName == "Harry Covère"));
 
-        var q = Context.Polls.ToList().Select(p => new { p.Id, Count = p.Votes.Count() });
+        //var q = Context.Polls.ToList().Select(p => new { p.Id, Count = p.Votes.Count() });
 
-        var q1 = from p in Context.Polls
-                 select new { p.Id, Count = (from v in Context.Votes where v.Choice.PollId == p.Id select v).Count() };
+        //var q1 = from p in Context.Polls
+        //         select new { p.Id, Count = (from v in Context.Votes where v.Choice.PollId == p.Id select v).Count() };
 
 
-        foreach (var v in q) {
-            Console.WriteLine(v);
-        }
+        //foreach (var v in q) {
+        //    Console.WriteLine(v);
+        //}
     }
 }
