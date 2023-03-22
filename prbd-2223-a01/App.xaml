@@ -5,7 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:m="clr-namespace:MyPoll.Model"
              xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
-             StartupUri="View/MainView.xaml">
+             StartupUri="View/LoginView.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
