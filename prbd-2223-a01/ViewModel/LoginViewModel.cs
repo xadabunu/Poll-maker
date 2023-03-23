@@ -10,9 +10,17 @@ namespace MyPoll.ViewModel;
 public class MainViewModel : ViewModelBase<User, MyPollContext> {
 
     public ObservableCollection<User> Users { get; set; }
-    public bool EnableButton { get; set; }
-    public ICommand CheckEnableButton { get; set; }
     public ICommand LoginCommand { get; set; }
+    // public ICommand LogAs { get; }
+    public ICommand LogAsJ { get; }
+    public ICommand LogAsH { get; }
+    public ICommand LogAsA { get; }
+
+
+    public  string[] Harry = { "harry@test.com", "harry" };
+    public string[] John = { "john@test.com", "john" };
+    public string[] Admin = { "admin@test.com", "admin" };
+
 
     private string _email;
     private string _password = "";
@@ -29,18 +37,31 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
 
     public MainViewModel() : base() {
 
-        EnableButton = true;
         Users = new ObservableCollection<User>(Context.Users.OrderBy(p => p.FullName));
 
-        CheckEnableButton = new RelayCommand(() => EnableButton = CheckPassword(GetUserByEmail())); ;
         LoginCommand = new RelayCommand(() => Login(), () => ValidateFields());
+        // LogAs = new RelayCommand<string[]>((cred) => {
+        //     Email = cred[0];
+        //     Password = cred[1];
+        //     Login();
+        // });
+        LogAsJ = new RelayCommand(() => LogAs(John));
+        LogAsH = new RelayCommand(() => LogAs(Harry));
+        LogAsA = new RelayCommand(() => LogAs(Admin));
+    }
+
+    private void LogAs(string[] creds) {
+        Email = creds[0];
+        Password = creds[1];
+        Login();
     }
 
     protected override void OnRefreshData() {
     }
 
     private void Login() {
-        Console.WriteLine("user connected");
+        var user = GetUserByEmail();
+        Console.WriteLine(user.FullName + " connected");
     }
 
     private bool ValidateFields() {
@@ -52,7 +73,6 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
         return u != null && CheckPassword(u);
     }
 
-    public string Title { get; } = "List of all users";
     private User GetUserByEmail() {
         User user = (from u in Users
                     where u.Email == Email
@@ -63,12 +83,7 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
 
     private bool EmailExists() => Users.Any(u => u.Email == Email);
 
-    private bool CheckPassword(User user) {
-        if (user != null) {
-            return SecretHasher.Verify(Password, user.Password);
-        }
-        return false;
-    }
+    private bool CheckPassword(User user) => user != null && SecretHasher.Verify(Password, user.Password);
 
     public override bool Validate() {
         ClearErrors();
