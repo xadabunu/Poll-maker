@@ -4,17 +4,19 @@ using MyPoll.Model;
 using PRBD_Framework;
 using System.Windows.Input;
 using Microsoft.IdentityModel.Tokens;
+using MyPoll.View;
 
 namespace MyPoll.ViewModel;
 
-public class MainViewModel : ViewModelBase<User, MyPollContext> {
+public class LoginViewModel : ViewModelCommon {
 
     public ObservableCollection<User> Users { get; set; }
-    public ICommand LoginCommand { get; set; }
+    public ICommand LoginCommand { get; }
     // public ICommand LogAs { get; }
     public ICommand LogAsJ { get; }
     public ICommand LogAsH { get; }
     public ICommand LogAsA { get; }
+    public ICommand SignUp { get; }
 
 
     public  string[] Harry = { "harry@test.com", "harry" };
@@ -35,9 +37,9 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
         set => SetProperty(ref _password, value, () => Validate()) ;
     }
 
-    public MainViewModel() : base() {
+    public LoginViewModel() : base() {
 
-        Users = new ObservableCollection<User>(Context.Users.OrderBy(p => p.FullName));
+        Users = new ObservableCollection<User>(Context.Users);
 
         LoginCommand = new RelayCommand(() => Login(), () => ValidateFields());
         // LogAs = new RelayCommand<string[]>((cred) => {
@@ -48,6 +50,7 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
         LogAsJ = new RelayCommand(() => LogAs(John));
         LogAsH = new RelayCommand(() => LogAs(Harry));
         LogAsA = new RelayCommand(() => LogAs(Admin));
+        SignUp = new RelayCommand<WindowBase>((win) => GoToSignUp(win));
     }
 
     private void LogAs(string[] creds) {
@@ -78,7 +81,6 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
                     where u.Email == Email
                     select u).SingleOrDefault();
         return user;
-        //return Users.Any(u => u.Email == email);
     }
 
     private bool EmailExists() => Users.Any(u => u.Email == Email);
@@ -88,11 +90,9 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
     public override bool Validate() {
         ClearErrors();
 
-        string regex = @"[a-zA-Z0-9]{1,20}[@]{1}[a-zA-A0-9]{1,15}[.]{1}[a-z]{1,7}";
-
         if (Email.IsNullOrEmpty())
             AddError(nameof(Email), "required");
-        else if (!Regex.IsMatch(Email, regex))
+        else if (!Regex.IsMatch(Email, EmailRegex))
             AddError(nameof(Email), "invalid email address");
         else if (!EmailExists())
             AddError(nameof(Email), "unknown email address");
@@ -104,6 +104,12 @@ public class MainViewModel : ViewModelBase<User, MyPollContext> {
         }
 
         return !HasErrors;
+    }
+
+    public void GoToSignUp(WindowBase win) {
+        var v = new SignupView();
+        win.Close();
+        v.Show();
     }
 }
 

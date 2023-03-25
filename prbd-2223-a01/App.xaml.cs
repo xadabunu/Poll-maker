@@ -3,11 +3,12 @@ using MyPoll.Model;
 using MyPoll.ViewModel;
 using PRBD_Framework;
 
-namespace MyPoll; 
+namespace MyPoll;
 
 public partial class App : ApplicationBase<User, MyPollContext> {
     protected override void OnStartup(StartupEventArgs e) {
         PrepareDatabase();
+        //Register<User>(this, );
     }
 
     private static void PrepareDatabase() {
@@ -20,6 +21,7 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         Context.Users.Find(0);
         Console.WriteLine("done");
 
+        /*
         //var q = from u in Context.Users
         //        select u;
 
@@ -34,5 +36,6 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         //foreach (var v in q) {
         //    Console.WriteLine(v);
         //}
+        */
     }
 }

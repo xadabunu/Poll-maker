@@ -3,8 +3,8 @@ using PRBD_Framework;
 
 namespace MyPoll.View;
 
-public partial class MainView : WindowBase {
-    public MainView() {
+public partial class LoginView : WindowBase {
+    public LoginView() {
         InitializeComponent();
     }
 
