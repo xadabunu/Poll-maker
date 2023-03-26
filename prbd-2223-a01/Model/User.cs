@@ -24,4 +24,9 @@ public class User : EntityBase<MyPollContext> {
     }
 
     public User() { }
+
+    public void Save() {
+        Context.Users.Add(this);
+        Context.SaveChanges();
+    }
 }

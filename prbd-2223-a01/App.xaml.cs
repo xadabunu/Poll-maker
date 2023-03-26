@@ -6,14 +6,22 @@ using PRBD_Framework;
 namespace MyPoll;
 
 public partial class App : ApplicationBase<User, MyPollContext> {
-    protected override void OnStartup(StartupEventArgs e) {
-        PrepareDatabase();
-        //Register<User>(this, );
+
+    public enum Messages {
+        MSG_NEW_USER,
+        MSG_LOGIN
     }
 
+    protected override void OnStartup(StartupEventArgs e) {
+        PrepareDatabase();
+        Register<User>(this, Messages.MSG_LOGIN, user => {
+            Login(user);
+            NavigateTo<MainViewModel, User, MyPollContext>();
+        });
+    }
     private static void PrepareDatabase() {
         // Clear database and seed data
-        //Context.Database.EnsureDeleted();
+        Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
 
         // Cold start

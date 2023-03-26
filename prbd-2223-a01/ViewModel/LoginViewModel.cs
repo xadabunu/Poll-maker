@@ -64,7 +64,7 @@ public class LoginViewModel : ViewModelCommon {
 
     private void Login() {
         var user = GetUserByEmail();
-        Console.WriteLine(user.FullName + " connected");
+        NotifyColleagues(App.Messages.MSG_LOGIN, user);
     }
 
     private bool ValidateFields() {
@@ -108,8 +108,8 @@ public class LoginViewModel : ViewModelCommon {
 
     public void GoToSignUp(WindowBase win) {
         var v = new SignupView();
-        win.Close();
         v.Show();
+        win.Close();
     }
 }
 

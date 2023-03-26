@@ -47,13 +47,19 @@ public class SignupViewModel : ViewModelCommon {
     }
 
     private void Login() {
-        Console.WriteLine("OK!");
+
+        var user = new User {
+            FullName = _fullName,
+            Email = _email,
+            Password = SecretHasher.Hash(_password)
+        };
+        user.Save();
+        NotifyColleagues(App.Messages.MSG_LOGIN, user);
     }
 
     private void Cancel(WindowBase win) {
-        var w = new LoginView();
+        new LoginView().Show();
         win.Close();
-        w.Show();
     }
 
     public override bool Validate() {
