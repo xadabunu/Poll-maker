@@ -1,3 +1,6 @@
+using System.Collections.ObjectModel;
+using MyPoll.Model;
+
 namespace MyPoll.ViewModel;
 
 public class MainViewModel : ViewModelCommon {

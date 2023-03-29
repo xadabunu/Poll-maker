@@ -31,4 +31,12 @@
     <ProjectReference Include="..\PRBD_Framework\PRBD_Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Remove="View\PollViews.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="View\PollViews.xaml.cs" />
+  </ItemGroup>
+
 </Project>

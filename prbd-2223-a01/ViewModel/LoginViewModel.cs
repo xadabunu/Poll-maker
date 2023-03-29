@@ -69,10 +69,6 @@ public class LoginViewModel : ViewModelCommon {
 
     private bool ValidateFields() {
         User u = GetUserByEmail();
-        // if (u != null) {
-        //     return CheckPassword(u, Password);
-        // }
-        // return false;
         return u != null && CheckPassword(u);
     }
 

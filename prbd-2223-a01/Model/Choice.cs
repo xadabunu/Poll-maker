@@ -20,4 +20,14 @@ public class Choice : EntityBase<MyPollContext> {
         PollId = pollId;
         Label = label;
     }
+
+    public double Score {
+        get {
+            double score = 0;
+            foreach (var v in Votes) {
+                score += (double)v.Value / 2;
+            }
+            return score;
+        }
+    }
 }

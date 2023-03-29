@@ -44,6 +44,18 @@ public class Poll : EntityBase<MyPollContext> {
         where v.Choice.PollId == Id
         select v;
 
+    public int VoteCount {
+        get => Votes.Count();
+    }
+
+    // public virtual ICollection<Choice> BestChoices {
+    //     get => Choices.Where(c => c.Score >= Choices.Max(ch => ch.Score)).ToList();
+    // }
+    //
+    // public string BestChoiceTitle {
+    //     get => "Best Choice" + (BestChoices.Count > 1 ? "s" : "");
+    // }
+
     public Poll(int id, string title, User creator, PollStatus? status, PollType? type) {
         Id = id;
         Title = title;
@@ -52,5 +64,6 @@ public class Poll : EntityBase<MyPollContext> {
         Creator = creator;
     }
 
-    public Poll() { }
+    public Poll() {
+    }
 }
