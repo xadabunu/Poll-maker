@@ -24,7 +24,6 @@
                     <!--            Margin="5 5 5 5"> -->
                             <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16"
                                        Margin="5 5 5 5"/>
-
                             <TextBlock>
                                 <Run>Created by </Run>
                                 <Run Text="{Binding Creator.FullName}" FontWeight="Bold"/>
@@ -40,8 +39,9 @@
                             <Run> vote(s)</Run>
                             </TextBlock>
 
+                        <TextBlock FontWeight="Bold" Text="{Binding BestChoiceTitle, Mode=OneWay}"/>
                         <TextBlock>
-                        <Run FontWeight="Bold" Text="{Binding BestChoiceTitle, Mode=OneWay}"/>
+                        <!-- <Run FontWeight="Bold" Text="{Binding }"/> -->
                         <ListView ItemsSource="{Binding BestChoices, Mode=OneWay}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
