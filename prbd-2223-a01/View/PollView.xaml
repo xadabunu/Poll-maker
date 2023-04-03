@@ -22,7 +22,7 @@
 
                         <!-- <WrapPanel Background="Aqua" Height="30" Orientation="Horizontal" -->
                     <!--            Margin="5 5 5 5"> -->
-                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap" Width="160"
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16"
                                        Margin="5 5 5 5"/>
 
                             <TextBlock>
@@ -32,24 +32,24 @@
 
                             <TextBlock>
                                 <Run Text="{Binding Participants.Count, Mode=OneWay}"/>
-                                <Run> Participants</Run>
+                                <Run> Participant(s)</Run>
                             </TextBlock>
 
                             <TextBlock>
                             <Run Text="{Binding VoteCount, Mode=OneWay}"/>
-                            <Run> votes</Run>
+                            <Run> vote(s)</Run>
                             </TextBlock>
 
-                        <!-- <TextBlock> -->
-                        <!--     <Run FontWeight="Bold" Text="{Binding BestChoiceTitle}"/> -->
-                        <!--     <ListView ItemsSource="{Binding BestChoices}"> -->
-                        <!--         <ListView.ItemTemplate> -->
-                        <!--             <DataTemplate> -->
-                        <!--                 <TextBlock Text="{Binding Label}"/> -->
-                        <!--             </DataTemplate> -->
-                        <!--         </ListView.ItemTemplate> -->
-                        <!--     </ListView> -->
-                        <!-- </TextBlock> -->
+                        <TextBlock>
+                        <Run FontWeight="Bold" Text="{Binding BestChoiceTitle, Mode=OneWay}"/>
+                        <ListView ItemsSource="{Binding BestChoices, Mode=OneWay}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Label}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        </TextBlock>
                     <!-- </WrapPanel> -->
                     </StackPanel>
                 </DataTemplate>

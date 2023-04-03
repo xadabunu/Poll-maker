@@ -32,11 +32,6 @@ public class Poll : EntityBase<MyPollContext> {
     public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
     public virtual ICollection<User> Participants { get; set; } = new HashSet<User>();
     public virtual ICollection<Choice> Choices { get; set; } = new HashSet<Choice>();
-    public IQueryable<Vote> GetVotes() {
-
-        var q = from v in Context.Votes where v.Choice.PollId == Id select v;
-        return q;
-    }
 
     [NotMapped]
     public IQueryable<Vote> Votes =>
@@ -48,13 +43,14 @@ public class Poll : EntityBase<MyPollContext> {
         get => Votes.Count();
     }
 
-    // public virtual ICollection<Choice> BestChoices {
-    //     get => Choices.Where(c => c.Score >= Choices.Max(ch => ch.Score)).ToList();
-    // }
-    //
-    // public string BestChoiceTitle {
-    //     get => "Best Choice" + (BestChoices.Count > 1 ? "s" : "");
-    // }
+    [NotMapped]
+    public ICollection<Choice> BestChoices {
+        get => VoteCount == 0 ? null : Choices.Where(c => c.Score >= Choices.Max(ch => ch.Score)).ToList();
+    }
+
+    public string BestChoiceTitle {
+        get => VoteCount == 0 ? "" : ("Best Choice" + (BestChoices.Count > 1 ? "s" : ""));
+    }
 
     public Poll(int id, string title, User creator, PollStatus? status, PollType? type) {
         Id = id;

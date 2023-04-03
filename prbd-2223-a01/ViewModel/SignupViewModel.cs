@@ -42,7 +42,9 @@ public class SignupViewModel : ViewModelCommon {
 
         Users = new ObservableCollection<User>(Context.Users);
 
-        SignUp = new RelayCommand(() => Login(), () => !HasErrors);
+        SignUp = new RelayCommand(() => Login(), () => Email != null &&
+                                                       Password !=null
+                                                       && !HasErrors);
         CancelCommand = new RelayCommand<WindowBase>((win) => Cancel(win));
     }
 
