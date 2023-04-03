@@ -9,7 +9,6 @@ namespace MyPoll.ViewModel;
 public class PollViewModel : ViewModelCommon {
 
     private ObservableCollection<Poll> _polls;
-
     public ObservableCollection<Poll> Polls {
         get => _polls;
         set => SetProperty(ref _polls, value, () => { });
@@ -23,13 +22,13 @@ public class PollViewModel : ViewModelCommon {
     }
 
     public PollViewModel() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls);
+        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
 
         ClearFilter = new RelayCommand(() => Filter = "");
     }
 
     private void ApplyFilterAction() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls);
+        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
 
         if (!Filter.IsNullOrEmpty()) {
             var query =
