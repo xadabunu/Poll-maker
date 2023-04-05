@@ -15,45 +15,55 @@
             <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250"/>
             <Button Content="Clear" Command="{Binding ClearFilter}"/>
         </StackPanel>
-        <ListView FlowDirection="LeftToRight" ItemsSource="{Binding Polls}">
-            <ListView.ItemTemplate>
+        <ListView ItemsSource="{Binding Polls}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"
+                               Grid.IsSharedSizeScope="True"
+                               MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}}"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-
-                        <!-- <WrapPanel Background="Aqua" Height="30" Orientation="Horizontal" -->
-                    <!--            Margin="5 5 5 5"> -->
-                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16"
-                                       Margin="5 5 5 5"/>
-                            <TextBlock>
-                                <Run>Created by </Run>
-                                <Run Text="{Binding Creator.FullName}" FontWeight="Bold"/>
-                            </TextBlock>
-
-                            <TextBlock>
-                                <Run Text="{Binding Participants.Count, Mode=OneWay}"/>
-                                <Run> Participant(s)</Run>
-                            </TextBlock>
-
-                            <TextBlock>
-                            <Run Text="{Binding VoteCount, Mode=OneWay}"/>
-                            <Run> vote(s)</Run>
-                            </TextBlock>
-
-                        <TextBlock FontWeight="Bold" Text="{Binding BestChoiceTitle, Mode=OneWay}"/>
-                        <TextBlock>
-                        <!-- <Run FontWeight="Bold" Text="{Binding }"/> -->
-                        <ListView ItemsSource="{Binding BestChoices, Mode=OneWay}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Label}"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        </TextBlock>
-                    <!-- </WrapPanel> -->
-                    </StackPanel>
+                    <Border Background="{Binding BackgroundColor}" BorderThickness="1"
+                            BorderBrush="{Binding BackgroundColor}" Padding="10" Margin="5"
+                            Width="250" CornerRadius="5" TextBlock.TextAlignment="Center">
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}"
+                                           FontWeight="Bold" FontSize="16"/>
+                                <TextBlock>
+                                    <Run Text="Created by"/>
+                                    <Run Text="{Binding Creator.FullName}" FontWeight="Bold"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding ParticipantsLabel, Mode=OneWay}"/>
+                                <TextBlock Text="{Binding VoteCountLabel, Mode=OneWay}"/>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding VoteCount}" Value="0">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0" TextWrapping="Wrap"/>
+                                        <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                        <TextBlock Text="{Binding LabelAndScore}" TextWrapping="WrapWithOverflow"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </ListView.ItemTemplate>
+            </ItemsControl.ItemTemplate>
         </ListView>
     </StackPanel>
 </f:UserControlBase>

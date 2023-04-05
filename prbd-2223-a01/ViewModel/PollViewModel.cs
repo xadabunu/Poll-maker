@@ -32,7 +32,7 @@ public class PollViewModel : ViewModelCommon {
 
         if (!Filter.IsNullOrEmpty()) {
             var query =
-                from p in CurrentUser.Polls
+                from p in Polls
                 where p.Title.Contains(Filter) ||
                       p.Participants.Any(u => u.FullName.Contains(Filter)) ||
                       p.Creator.FullName.Contains(Filter) ||
@@ -41,5 +41,4 @@ public class PollViewModel : ViewModelCommon {
             Polls = new ObservableCollection<Poll>(query);
         }
     }
-
 }

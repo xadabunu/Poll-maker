@@ -30,4 +30,8 @@ public class Choice : EntityBase<MyPollContext> {
             return score;
         }
     }
+
+    public string LabelAndScore {
+        get => Label + " (" + Score + ")";
+    }
 }

@@ -19,9 +19,9 @@ public class LoginViewModel : ViewModelCommon {
     public ICommand SignUp { get; }
 
 
-    public  string[] Harry = { "harry@test.com", "harry" };
-    public string[] John = { "john@test.com", "john" };
-    public string[] Admin = { "admin@test.com", "admin" };
+    private readonly string[] _harry = { "harry@test.com", "harry" };
+    private readonly string[] _john = { "john@test.com", "john" };
+    private readonly string[] _admin = { "admin@test.com", "admin" };
 
 
     private string _email;
@@ -47,9 +47,9 @@ public class LoginViewModel : ViewModelCommon {
         //     Password = cred[1];
         //     Login();
         // });
-        LogAsJ = new RelayCommand(() => LogAs(John));
-        LogAsH = new RelayCommand(() => LogAs(Harry));
-        LogAsA = new RelayCommand(() => LogAs(Admin));
+        LogAsJ = new RelayCommand(() => LogAs(_john));
+        LogAsH = new RelayCommand(() => LogAs(_harry));
+        LogAsA = new RelayCommand(() => LogAs(_admin));
         SignUp = new RelayCommand<WindowBase>((win) => GoToSignUp(win));
     }
 

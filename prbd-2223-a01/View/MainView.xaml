@@ -12,10 +12,15 @@
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
-    <f:MyTabControl x:Name="TabControl" Margin="10" Grid.Row="1">
-        <TabItem x:Name="pollsTab" Header="Polls" Tag="Polls">
-            <vw:PollView/>
-        </TabItem>
-    </f:MyTabControl>
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Logout" Command="{Binding LogoutCommand}"/>
+        </StackPanel>
+        <f:MyTabControl x:Name="TabControl" Margin="10" Grid.Row="1">
+            <TabItem x:Name="pollsTab" Header="Polls" Tag="Polls">
+                <vw:PollView/>
+            </TabItem>
+        </f:MyTabControl>
+    </StackPanel>
 </f:WindowBase>
 

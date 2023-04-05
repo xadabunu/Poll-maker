@@ -39,8 +39,16 @@ public class Poll : EntityBase<MyPollContext> {
         where v.Choice.PollId == Id
         select v;
 
+    public string ParticipantsLabel {
+        get => Participants.Count + " participant" + (Participants.Count > 1 ? "s" : "");
+    }
+
     public int VoteCount {
         get => Votes.Count();
+    }
+
+    public string VoteCountLabel {
+        get => VoteCount + " vote" + (VoteCount > 1 ? "s" : "");
     }
 
     [NotMapped]
@@ -49,15 +57,15 @@ public class Poll : EntityBase<MyPollContext> {
     }
 
     public string BestChoiceTitle {
-        get => VoteCount == 0 ? "" : ("Best Choice" + (BestChoices.Count > 1 ? "s" : ""));
+        get => "Best Choice" + (BestChoices.Count > 1 ? "s" : "") + " :";
     }
 
-    public Poll(int id, string title, User creator, PollStatus? status, PollType? type) {
-        Id = id;
-        Title = title;
-        Type = type ?? PollType.Multiple;
-        Status = status ?? PollStatus.Open;
-        Creator = creator;
+    private bool HasVoted() {
+        return Votes.Any(v => v.User == App.CurrentUser);
+    }
+
+    public string BackgroundColor {
+        get => Status == PollStatus.Closed ? "#FFE6DC" : !HasVoted() ? "#D3D3D3" : "#C4E0C4";
     }
 
     public Poll() {
