@@ -14,6 +14,7 @@ public class PollViewModel : ViewModelCommon {
         set => SetProperty(ref _polls, value, () => { });
     }
     public ICommand ClearFilter { get; set; }
+    public ICommand OpenView { get; }
 
     private string _filter;
     public string Filter {
@@ -25,6 +26,7 @@ public class PollViewModel : ViewModelCommon {
         Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
 
         ClearFilter = new RelayCommand(() => Filter = "");
+        OpenView = new RelayCommand(() => Console.WriteLine("open view"));
     }
 
     private void ApplyFilterAction() {

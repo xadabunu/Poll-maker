@@ -45,15 +45,6 @@
         </DockPanel>
         <DockPanel Grid.Row="3" Grid.ColumnSpan="2"/>
         <DockPanel Grid.Row="4" Grid.ColumnSpan="2"/>
-        <TextBlock Text="FOR TEST/DEBUG PURPOSE" HorizontalAlignment="Left" FontWeight="Bold" Foreground="Red" Grid.Column="1" Margin="16,83,0,-83" Grid.Row="4"/>
-        <Button Content="Login as John Deuf (User)" Margin="15,174,15,-164" Grid.ColumnSpan="2" Grid.Row="4"
-                Command="{Binding LogAsJ}"/>
-
-        <Button Content="Login as Harry Covère (User)" Margin="15,134,15,-124" Grid.ColumnSpan="2" Grid.Row="4"
-                Command="{Binding LogAsH}"/>
-
-        <Button Content="Login as Admin (Administrator)" Margin="15,210,15,-200" Grid.ColumnSpan="2" Grid.Row="4"
-                Command="{Binding LogAsA}"/>
 
         <TextBlock Height="auto" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Left" Width="220" Grid.ColumnSpan="2" Margin="44,31,0,-33" Grid.Row="4" >
             <Run Text="If you don't have a login and a password, click "/>
@@ -63,6 +54,17 @@
             </Hyperlink>
             <Run Text=" to sign-up."/>
         </TextBlock>
+
+        <TextBlock Text="FOR TEST/DEBUG PURPOSE" HorizontalAlignment="Left" FontWeight="Bold" Foreground="Red" Grid.Column="1" Margin="16,83,0,-83" Grid.Row="4"/>
+
+        <Button Content="Login as Harry Covère (User)" Margin="15,134,15,-124" Grid.ColumnSpan="2" Grid.Row="4"
+                Command="{Binding LogAsH}"/>
+
+        <Button Content="Login as John Deuf (User)" Margin="15,174,15,-164" Grid.ColumnSpan="2" Grid.Row="4"
+                Command="{Binding LogAsJ}"/>
+
+        <Button Content="Login as Admin (Administrator)" Margin="15,210,15,-200" Grid.ColumnSpan="2" Grid.Row="4"
+                Command="{Binding LogAsA}"/>
     </Grid>
 
 </f:WindowBase>

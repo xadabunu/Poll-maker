@@ -15,7 +15,16 @@
             <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250"/>
             <Button Content="Clear" Command="{Binding ClearFilter}"/>
         </StackPanel>
-        <ListView ItemsSource="{Binding Polls}">
+        <ListView ItemsSource="{Binding Polls}"
+                  SelectedItem="SelectedItem"
+                  CommandBindings="{Binding OpenView, Mode=OneWay}">
+
+            <!-- <b:Interaction.Triggers> -->
+            <!--     <b:EventTrigger EventName="MouseClicked"> -->
+            <!--         <b:InvokeCommandAction Command="{Binding OpenView}" -->
+            <!--                                CommandParameter="{Binding .}"/> -->
+            <!--     </b:EventTrigger> -->
+            <!-- </b:Interaction.Triggers> -->
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"
@@ -29,7 +38,10 @@
                             BorderBrush="{Binding BackgroundColor}" Padding="10" Margin="5"
                             Width="250" CornerRadius="5" TextBlock.TextAlignment="Center">
                         <Grid>
-                            <StackPanel>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="group"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.IsSharedSizeScope="True">
                                 <TextBlock Text="{Binding Title}"
                                            FontWeight="Bold" FontSize="16"/>
                                 <TextBlock>
@@ -38,7 +50,7 @@
                                 </TextBlock>
                                 <TextBlock Text="{Binding ParticipantsLabel, Mode=OneWay}"/>
                                 <TextBlock Text="{Binding VoteCountLabel, Mode=OneWay}"/>
-                                <TextBlock>
+                                <TextBlock TextWrapping="WrapWithOverflow">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Style.Triggers>
@@ -49,14 +61,14 @@
                                         </Style>
                                     </TextBlock.Style>
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0" TextWrapping="Wrap"/>
-                                        <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                        <TextBlock Text="{Binding LabelAndScore}" TextWrapping="WrapWithOverflow"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                        <!-- <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0" TextWrapping="Wrap"/> -->
+                                        <!-- <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}"> -->
+                                        <!--     <ItemsControl.ItemTemplate> -->
+                                        <!--         <DataTemplate> -->
+                                        <!--                 <TextBlock Text="{Binding LabelAndScore}" TextWrapping="Wrap"/> -->
+                                        <!--         </DataTemplate> -->
+                                        <!--     </ItemsControl.ItemTemplate> -->
+                                        <!-- </ItemsControl> -->
                                     </StackPanel>
                                 </TextBlock>
                             </StackPanel>
