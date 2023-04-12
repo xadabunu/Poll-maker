@@ -27,21 +27,20 @@ public class PollViewModel : ViewModelCommon {
 
         ClearFilter = new RelayCommand(() => Filter = "");
         OpenView = new RelayCommand<Poll>((poll) =>
-            Console.WriteLine(poll.Title));
+            NotifyColleagues(App.Messages.MSG_POLL_SELECTED, poll));
     }
 
     private void ApplyFilterAction() {
         Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
 
-        if (!Filter.IsNullOrEmpty()) {
-            var query =
-                from p in Polls
-                where p.Title.Contains(Filter) ||
-                      p.Participants.Any(u => u.FullName.Contains(Filter)) ||
-                      p.Creator.FullName.Contains(Filter) ||
-                      p.Choices.Any(c => c.Label.Contains(Filter))
-                select p;
-            Polls = new ObservableCollection<Poll>(query);
-        }
+        if (Filter.IsNullOrEmpty()) return;
+        var query =
+            from p in Polls
+            where p.Title.Contains(Filter) ||
+                  p.Participants.Any(u => u.FullName.Contains(Filter)) ||
+                  p.Creator.FullName.Contains(Filter) ||
+                  p.Choices.Any(c => c.Label.Contains(Filter))
+            select p;
+        Polls = new ObservableCollection<Poll>(query);
     }
 }
