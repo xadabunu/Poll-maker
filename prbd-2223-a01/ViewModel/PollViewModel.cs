@@ -26,7 +26,8 @@ public class PollViewModel : ViewModelCommon {
         Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
 
         ClearFilter = new RelayCommand(() => Filter = "");
-        OpenView = new RelayCommand(() => Console.WriteLine("open view"));
+        OpenView = new RelayCommand<Poll>((poll) =>
+            Console.WriteLine(poll.Title));
     }
 
     private void ApplyFilterAction() {

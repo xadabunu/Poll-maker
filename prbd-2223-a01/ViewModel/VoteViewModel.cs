@@ -1,5 +1,5 @@
-namespace MyPoll.ViewModel; 
+namespace MyPoll.ViewModel;
 
-public class VoteViewModel {
-    
+public class VoteViewModel : ViewModelCommon {
+
 }

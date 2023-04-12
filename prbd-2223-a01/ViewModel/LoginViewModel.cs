@@ -50,7 +50,7 @@ public class LoginViewModel : ViewModelCommon {
         LogAsJ = new RelayCommand(() => LogAs(_john));
         LogAsH = new RelayCommand(() => LogAs(_harry));
         LogAsA = new RelayCommand(() => LogAs(_admin));
-        SignUp = new RelayCommand<WindowBase>((win) => GoToSignUp(win));
+        SignUp = new RelayCommand(() => NotifyColleagues(App.Messages.MSG_SIGNUP));
     }
 
     private void LogAs(string[] creds) {
@@ -100,12 +100,6 @@ public class LoginViewModel : ViewModelCommon {
         }
 
         return !HasErrors;
-    }
-
-    public void GoToSignUp(WindowBase win) {
-        var v = new SignupView();
-        v.Show();
-        win.Close();
     }
 }
 

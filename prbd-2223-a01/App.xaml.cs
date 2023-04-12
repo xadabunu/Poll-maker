@@ -8,8 +8,9 @@ namespace MyPoll;
 public partial class App : ApplicationBase<User, MyPollContext> {
 
     public enum Messages {
-        MSG_NEW_USER,
-        MSG_LOGIN
+        MSG_SIGNUP,
+        MSG_LOGIN,
+        MSG_POLL_SELECTED
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -18,6 +19,8 @@ public partial class App : ApplicationBase<User, MyPollContext> {
             Login(user);
             NavigateTo<MainViewModel, User, MyPollContext>();
         });
+        Register(this, Messages.MSG_SIGNUP, () =>
+            NavigateTo<SignupViewModel, User, MyPollContext>());
     }
     private static void PrepareDatabase() {
         // Clear database and seed data
