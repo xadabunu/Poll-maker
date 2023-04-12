@@ -1,30 +1,28 @@
 <f:UserControlBase x:Class="MyPoll.View.PollView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:MyPoll.View"
-        xmlns:vm="clr-namespace:MyPoll.ViewModel"
-        xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
-        mc:Ignorable="d">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:local="clr-namespace:MyPoll.View"
+                   xmlns:vm="clr-namespace:MyPoll.ViewModel"
+                   xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+                   mc:Ignorable="d">
     <UserControl.DataContext>
-        <vm:PollViewModel/>
+        <vm:PollViewModel />
     </UserControl.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
-            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250"/>
-            <Button Content="Clear" Command="{Binding ClearFilter}"/>
+            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250" />
+            <Button Content="Clear" Command="{Binding ClearFilter}" />
         </StackPanel>
-        <ListView ItemsSource="{Binding Polls}"
-                  SelectedItem="SelectedItem"
-                  CommandBindings="{Binding OpenView, Mode=OneWay}">
+        <ListView ItemsSource="{Binding Polls}">
 
-            <!-- <b:Interaction.Triggers> -->
-            <!--     <b:EventTrigger EventName="MouseClicked"> -->
-            <!--         <b:InvokeCommandAction Command="{Binding OpenView}" -->
-            <!--                                CommandParameter="{Binding .}"/> -->
-            <!--     </b:EventTrigger> -->
-            <!-- </b:Interaction.Triggers> -->
+            <!--<b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseClicked">
+                    <b:InvokeCommandAction Command="{Binding OpenView}"
+                                           CommandParameter="{Binding .}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>-->
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"
@@ -34,49 +32,51 @@
             </ListView.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="{Binding BackgroundColor}" BorderThickness="1"
-                            BorderBrush="{Binding BackgroundColor}" Padding="10" Margin="5"
-                            Width="250" CornerRadius="5" TextBlock.TextAlignment="Center">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="group"/>
-                            </Grid.ColumnDefinitions>
+                    <!--<Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition SharedSizeGroup="group" />
+                        </Grid.RowDefinitions>
+                        <Border Background="{Binding BackgroundColor}" BorderThickness="0"
+                                BorderBrush="{Binding BackgroundColor}" Padding="10" Margin="5"
+                                Width="250" CornerRadius="5" TextBlock.TextAlignment="Center">
+
                             <StackPanel Grid.IsSharedSizeScope="True">
                                 <TextBlock Text="{Binding Title}"
-                                           FontWeight="Bold" FontSize="16"/>
+                                           FontWeight="Bold" FontSize="16" />
                                 <TextBlock>
-                                    <Run Text="Created by"/>
-                                    <Run Text="{Binding Creator.FullName}" FontWeight="Bold"/>
+                                    <Run Text="Created by" />
+                                    <Run Text="{Binding Creator.FullName}" FontWeight="Bold" />
                                 </TextBlock>
-                                <TextBlock Text="{Binding ParticipantsLabel, Mode=OneWay}"/>
-                                <TextBlock Text="{Binding VoteCountLabel, Mode=OneWay}"/>
+                                <TextBlock Text="{Binding ParticipantsLabel, Mode=OneWay}" />
+                                <TextBlock Text="{Binding VoteCountLabel, Mode=OneWay}" />
                                 <TextBlock TextWrapping="WrapWithOverflow">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding VoteCount}" Value="0">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
                                     <StackPanel Orientation="Vertical">
-                                        <!-- <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0" TextWrapping="Wrap"/> -->
-                                        <!-- <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}"> -->
-                                        <!--     <ItemsControl.ItemTemplate> -->
-                                        <!--         <DataTemplate> -->
-                                        <!--                 <TextBlock Text="{Binding LabelAndScore}" TextWrapping="Wrap"/> -->
-                                        <!--         </DataTemplate> -->
-                                        <!--     </ItemsControl.ItemTemplate> -->
-                                        <!-- </ItemsControl> -->
+                                        <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0"
+                                                   TextWrapping="Wrap" />
+                                        <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding LabelAndScore}" TextWrapping="Wrap" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </TextBlock>
                             </StackPanel>
-                        </Grid>
-                    </Border>
+                        </Border>
+                    </Grid>-->
+                    <local:PollItemView/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListView>
     </StackPanel>
 </f:UserControlBase>
-
