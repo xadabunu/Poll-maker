@@ -29,7 +29,7 @@
                     </Border>
                 </DockPanel>
 
-                <ItemsControl ItemsSource="{Binding Poll.Choices}">
+                <ItemsControl ItemsSource="{Binding Choices}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"/>
