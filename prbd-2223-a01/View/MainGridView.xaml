@@ -1,0 +1,81 @@
+<prbdFramework:UserControlBase x:Class="MyPoll.View.MainGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MyPoll.View"
+             xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             xmlns:viewModel="clr-namespace:MyPoll.ViewModel"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModel:PollVotesViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+
+        <StackPanel Orientation="Vertical" Height="Auto"
+                    Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <StackPanel Name="Header" Orientation="Horizontal" MinHeight="50">
+
+                <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="100">
+                    <Border DockPanel.Dock="Bottom" BorderBrush="Black" BorderThickness="1 1 0 1"
+                            SnapsToDevicePixels="True" Background="#FFE6E6E6" Margin="0" Height="30">
+                        <Grid Width="auto">
+                            <TextBlock Text="Participants" Margin="5" Padding="0"
+                                       HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                                       Width="auto" Height="auto" TextAlignment="Center"
+                                       TextWrapping="Wrap" FontWeight="Bold" />
+                        </Grid>
+                    </Border>
+                </DockPanel>
+
+                <ItemsControl ItemsSource="{Binding Poll.Choices}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Black" BorderThickness="1,1,0,1" SnapsToDevicePixels="True"
+                                    Background="#FFE6E6E6" HorizontalAlignment="Stretch" Width="100">
+                                <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Label}" Padding="5" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Width="auto" TextAlignment="Center" TextWrapping="Wrap"
+                                               FontWeight="Bold">
+                                    </TextBlock>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Border BorderBrush="Black" BorderThickness="1, 0, 0, 0" Width="60">
+                    <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                        <Border DockPanel.Dock="Bottom" BorderBrush="Black" BorderThickness="0,1,1,1"
+                                SnapsToDevicePixels="True" Background="#FFE6E6E6" Margin="0" VerticalAlignment="Bottom" Height="30">
+                            <Grid Width="auto">
+                                <TextBlock Text="Actions" Margin="5" Padding="0" HorizontalAlignment="Center"
+                                           Width="auto" Height="auto" TextAlignment="Center" TextWrapping="Wrap"
+                                           FontWeight="Bold">
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+                    </DockPanel>
+                </Border>
+
+            </StackPanel>
+
+            <ItemsControl ItemsSource="{Binding ParticipantsVM}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:MainRowView/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</prbdFramework:UserControlBase>
+

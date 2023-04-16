@@ -1,0 +1,37 @@
+<prbdFramework:UserControlBase x:Class="MyPoll.View.MainCellView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MyPoll.View"
+             xmlns:vm="clr-namespace:MyPoll.ViewModel"
+             xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             xmlns:fa="http://schemas.fontawesome.com/icons/fonts"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+             xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:MainCellViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <Border BorderBrush="Black" BorderThickness="1 0 0 1"
+            SnapsToDevicePixels="True" Width="100" MinHeight="50">
+
+        <StackPanel VerticalAlignment="Center">
+            <fa:FontAwesome Icon="{Binding VotedIcon}"
+                            Foreground="{Binding VotedColor}"
+                            FontSize="25" Visibility="{c:Binding !EditMode}"/>
+
+            <Button Padding="2" BorderBrush="Transparent"
+                    Visibility="{c:Binding EditMode}"
+                    Background="Transparent" Width="32"
+                    Command="{Binding ChangeVote}">
+                <fa:FontAwesome Icon="Solid_Check"
+                                Foreground="{c:Binding 'IsVoted ? media:Brushes.Green : media:Brushes.LightGray'}"
+                                FontSize="25"
+                                ToolTip="{Binding VotedToolTip}" />
+            </Button>
+        </StackPanel>
+
+    </Border>
+</prbdFramework:UserControlBase>
+

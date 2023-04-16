@@ -8,9 +8,13 @@ public class PollVotesViewModel : ViewModelCommon {
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
 
-        // Save = new RelayCommand(SaveAction, CanSaveAction);
+        var participants = poll.Participants.OrderBy(p => p.FullName);
+
+        _participantsVM = participants.Select(p => new MainRowViewModel(this, p, poll.Choices.ToList())).ToList();
     }
 
     public Poll Poll { get; set; }
-    public string CreatorTitle => " x)";
+
+    private List<MainRowViewModel> _participantsVM;
+    public List<MainRowViewModel> ParticipantsVM => _participantsVM;
 }

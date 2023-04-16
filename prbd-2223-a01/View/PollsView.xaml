@@ -44,48 +44,6 @@
             </ListView.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <!--<Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition SharedSizeGroup="group" />
-                        </Grid.RowDefinitions>
-                        <Border Background="{Binding BackgroundColor}" BorderThickness="0"
-                                BorderBrush="{Binding BackgroundColor}" Padding="10" Margin="5"
-                                Width="250" CornerRadius="5" TextBlock.TextAlignment="Center">
-
-                            <StackPanel Grid.IsSharedSizeScope="True">
-                                <TextBlock Text="{Binding Title}"
-                                           FontWeight="Bold" FontSize="16" />
-                                <TextBlock>
-                                    <Run Text="Created by" />
-                                    <Run Text="{Binding Creator.FullName}" FontWeight="Bold" />
-                                </TextBlock>
-                                <TextBlock Text="{Binding ParticipantsLabel, Mode=OneWay}" />
-                                <TextBlock Text="{Binding VoteCountLabel, Mode=OneWay}" />
-                                <TextBlock TextWrapping="WrapWithOverflow">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding VoteCount}" Value="0">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding BestChoiceTitle}" FontWeight="Bold" Margin="0 5 0 0"
-                                                   TextWrapping="Wrap" />
-                                        <ItemsControl ItemsSource="{Binding BestChoices, Mode=OneWay}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding LabelAndScore}" TextWrapping="Wrap" />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </TextBlock>
-                            </StackPanel>
-                        </Border>
-                    </Grid>-->
                     <local:PollItemView/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

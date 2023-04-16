@@ -7,13 +7,25 @@
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type=vm:PollVotesViewModel, IsDesignTimeCreatable=False}">
     <Grid>
-        <TextBlock>
-            <Run Text="{Binding Poll.Title}" FontSize="20" FontWeight="Bold"/>
-            <Run Text="{Binding CreatorTitle}" FontStyle="Italic"/>
-        </TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <TextBlock>
+                <Run Text="{Binding Poll.Title}" FontSize="20" FontWeight="Bold"/>
+                <Run Text=" (Created by " FontStyle="Italic"/>
+                <Run Text="{Binding Poll.Creator.FullName}" FontStyle="Italic"/>
+                <Run Text=")" FontStyle="Italic"/>
+            </TextBlock>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            <local:MainGridView />
+        </DockPanel>
     </Grid>
 </prbdFramework:UserControlBase>
 

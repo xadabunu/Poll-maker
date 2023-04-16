@@ -16,7 +16,7 @@
         <StackPanel Orientation="Horizontal">
             <Button Content="Logout" Command="{Binding LogoutCommand}"/>
         </StackPanel>
-        <f:MyTabControl x:Name="tabControl" Margin="10" Grid.Row="1">
+        <f:MyTabControl x:Name="tabControl" Margin="10" HasCloseButton="True">
             <TabItem x:Name="pollsTab" Header="Polls" Tag="Polls">
                 <vw:PollView/>
             </TabItem>
