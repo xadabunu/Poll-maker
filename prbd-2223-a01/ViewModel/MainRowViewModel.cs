@@ -38,13 +38,11 @@ public class MainRowViewModel : ViewModelCommon {
         set => SetProperty(ref _editMode, value, EditModeChanged);
     }
 
-    public bool ParentEditMode => _pollVotesViewModel.EditMode;
-    public bool Editable => Participant == App.CurrentUser && !EditMode;
+    public bool Editable => Participant == App.CurrentUser && !_editMode;
 
     private void EditModeChanged() {
         if (Participant == App.CurrentUser)
-            foreach (var CellVM in _cellsVm)
-                CellVM.EditMode = EditMode;
+            _cellsVm.ForEach(vm => vm.EditMode = EditMode);
         _pollVotesViewModel.AskEditMode(EditMode);
     }
 

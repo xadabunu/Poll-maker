@@ -20,17 +20,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private List<MainRowViewModel> _participantsVM;
     public List<MainRowViewModel> ParticipantsVM => _participantsVM;
 
-    private bool _editMode;
-
-    public bool EditMode {
-        get => _editMode;
-        set => SetProperty(ref _editMode, value);
-    }
-
     public void AskEditMode(bool editMode) {
-        EditMode = editMode;
-        foreach (var vm in ParticipantsVM)
-            if (vm.Participant == CurrentUser)
-                vm.Changes();
+        ParticipantsVM.ForEach(vm => vm.Changes());
     }
 }

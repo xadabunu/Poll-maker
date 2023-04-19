@@ -13,7 +13,7 @@ public class PollViewModel : ViewModelCommon {
         get => _polls;
         set => SetProperty(ref _polls, value, () => { });
     }
-    public ICommand ClearFilter { get; set; }
+    public ICommand ClearFilter { get; }
     public ICommand OpenView { get; }
 
     private string _filter;
@@ -23,7 +23,7 @@ public class PollViewModel : ViewModelCommon {
     }
 
     public PollViewModel() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
+        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)).OrderBy(p => p.Title));
 
         ClearFilter = new RelayCommand(() => Filter = "");
         OpenView = new RelayCommand<Poll>((poll) =>
@@ -40,7 +40,12 @@ public class PollViewModel : ViewModelCommon {
                   p.Participants.Any(u => u.FullName.Contains(Filter)) ||
                   p.Creator.FullName.Contains(Filter) ||
                   p.Choices.Any(c => c.Label.Contains(Filter))
+            orderby p.Title
             select p;
         Polls = new ObservableCollection<Poll>(query);
+    }
+
+    protected override void OnRefreshData() {
+        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)).OrderBy(p => p.Title));
     }
 }
