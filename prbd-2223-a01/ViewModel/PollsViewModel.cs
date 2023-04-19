@@ -11,7 +11,7 @@ public class PollViewModel : ViewModelCommon {
     private ObservableCollection<Poll> _polls;
     public ObservableCollection<Poll> Polls {
         get => _polls;
-        set => SetProperty(ref _polls, value, () => { });
+        set => SetProperty(ref _polls, value);
     }
     public ICommand ClearFilter { get; }
     public ICommand OpenView { get; }
@@ -19,19 +19,22 @@ public class PollViewModel : ViewModelCommon {
     private string _filter;
     public string Filter {
         get => _filter;
-        set => SetProperty(ref _filter, value, ApplyFilterAction);
+        set => SetProperty(ref _filter, value, OnRefreshData);
     }
 
     public PollViewModel() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)).OrderBy(p => p.Title));
-
+        OnRefreshData(); //?
         ClearFilter = new RelayCommand(() => Filter = "");
-        OpenView = new RelayCommand<Poll>((poll) =>
+        OpenView = new RelayCommand<Poll>(poll =>
             NotifyColleagues(App.Messages.MSG_POLL_SELECTED, poll));
     }
 
-    private void ApplyFilterAction() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
+    protected override void OnRefreshData() {
+        Polls = new ObservableCollection<Poll>(Context.Polls
+            .Where(p => p.Participants.Any(part => part.Id == CurrentUser.Id))
+            .Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
+
+        // Orderby ?
 
         if (Filter.IsNullOrEmpty()) return;
         var query =
@@ -43,9 +46,5 @@ public class PollViewModel : ViewModelCommon {
             orderby p.Title
             select p;
         Polls = new ObservableCollection<Poll>(query);
-    }
-
-    protected override void OnRefreshData() {
-        Polls = new ObservableCollection<Poll>(CurrentUser.Polls.Union(Context.Polls.Where(p => p.Creator == CurrentUser)).OrderBy(p => p.Title));
     }
 }

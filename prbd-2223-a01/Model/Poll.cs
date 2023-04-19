@@ -56,7 +56,7 @@ public class Poll : EntityBase<MyPollContext> {
     }
 
     public string BestChoiceTitle {
-        get => "Best Choice" + (BestChoices.Count > 1 ? "s" : "") + " :";
+        get => "Best Choice" + (BestChoices?.Count > 1 ? "s" : "") + " :";
     }
 
     private bool HasVoted() {

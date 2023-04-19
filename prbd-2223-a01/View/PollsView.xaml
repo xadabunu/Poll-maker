@@ -11,6 +11,7 @@
     <UserControl.DataContext>
         <vm:PollViewModel />
     </UserControl.DataContext>
+    <!-- enlever border du stackpanel ? -->
     <UserControl.Resources>
         <Style TargetType="ListViewItem">
             <Setter Property="Template">
@@ -22,10 +23,10 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <StackPanel>
+    <StackPanel SnapsToDevicePixels="True">
         <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
-            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250" />
-            <Button Content="Clear" Command="{Binding ClearFilter}" />
+            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250" Margin="5" />
+            <Button Content="Clear" Command="{Binding ClearFilter}" Margin="5" />
         </StackPanel>
         <ListView Name="ListView" ItemsSource="{Binding Polls}">
 
