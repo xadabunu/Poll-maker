@@ -11,7 +11,8 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         MSG_SIGNUP,
         MSG_LOGIN,
         MSG_POLL_SELECTED,
-        MSG_CANCEL_SIGNUP
+        MSG_CANCEL_SIGNUP,
+        MSG_LOGOUT
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -24,6 +25,10 @@ public partial class App : ApplicationBase<User, MyPollContext> {
             NavigateTo<SignupViewModel, User, MyPollContext>());
         Register(this, Messages.MSG_CANCEL_SIGNUP, () =>
             NavigateTo<LoginViewModel, User, MyPollContext>());
+        Register(this, Messages.MSG_LOGOUT, () => {
+            Logout();
+            NavigateTo<LoginViewModel, User, MyPollContext>();
+        });
     }
     private static void PrepareDatabase() {
         // Clear database and seed data
