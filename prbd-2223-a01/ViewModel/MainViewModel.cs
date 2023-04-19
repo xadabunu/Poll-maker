@@ -8,14 +8,12 @@ namespace MyPoll.ViewModel;
 public class MainViewModel : ViewModelCommon {
 
     public ICommand LogoutCommand { get; }
+    public ICommand ReloadCommand { get; }
 
     public string Title { get; set; } = "My Poll App (" + App.CurrentUser.FullName + ")";
 
     public MainViewModel() : base() {
-        LogoutCommand = new RelayCommand(() => Logout());
-    }
-
-    private void Logout() {
-        NotifyColleagues(App.Messages.MSG_LOGOUT);
+        LogoutCommand = new RelayCommand(() => NotifyColleagues(App.Messages.MSG_LOGOUT));
+        ReloadCommand = new RelayCommand(() => {});
     }
 }

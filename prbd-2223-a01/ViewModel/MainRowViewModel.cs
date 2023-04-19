@@ -65,14 +65,20 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Save() {
+        Participant.Votes = CellsVM.Where(vm => vm.IsVoted).Select(vm => vm.Vote).ToList();
+        Context.SaveChanges();
         EditMode = false;
+        RefreshChoices();
     }
 
     private void Cancel() {
+        RefreshChoices();
         EditMode = false;
     }
 
     private void Delete() {
-        EditMode = false;
+        CellsVM.ToList().ForEach(vm => vm.Vote.Value = VoteValue.None);
+        Context.SaveChanges();
+        RefreshChoices();
     }
 }
