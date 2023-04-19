@@ -59,9 +59,19 @@ public class MainCellViewModel : ViewModelCommon {
                     _ => Brushes.White
                 };
             }
-            return IsVoted ? Brushes.Green : Brushes.White;
+            return Brushes.White;
         }
     }
+
+    public bool VotedYes {
+        get => _vote.Value == VoteValue.Yes;
+    }
+
+    public bool VotedMaybe {
+        get => _vote.Value == VoteValue.Maybe;
+    }
+
+    public bool VotedNo => Vote.Value == VoteValue.No;
 
     public string VotedToolTip => IsVoted ? "Yes" : "No";
 }

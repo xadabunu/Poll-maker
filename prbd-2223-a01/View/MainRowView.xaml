@@ -7,7 +7,9 @@
              d:DataContext="{d:DesignInstance Type=viewModel:MainRowViewModel}"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              xmlns:viewModel="clr-namespace:MyPoll.ViewModel"
+             xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel Orientation="Horizontal">
@@ -36,22 +38,22 @@
                 <Button fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black" Width="20"
                         FontSize="15" Margin="0"
                         Padding="2" Background="Transparent" BorderBrush="Transparent"
-                        Visibility="{Binding Editable}"
+                        Visibility="{c:Binding Editable}"
                         Command="{Binding EditCommand}" />
                 <Button fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20"
                         FontSize="15" Margin="0"
                         Padding="2" Background="Transparent" BorderBrush="Transparent"
-                        Visibility="{Binding Editable}"
+                        Visibility="{c:Binding Editable}"
                         Command="{Binding DeleteCommand}" />
                 <Button fap:FontAwesome.Icon="Solid_FloppyDisk" Foreground="Green" Width="20"
                         FontSize="15" Margin="0"
                         Padding="2" Background="Transparent" BorderBrush="Transparent"
-                        Visibility="{Binding EditMode}"
+                        Visibility="{c:Binding EditMode}"
                         Command="{Binding SaveCommand}" />
                 <Button fap:FontAwesome.Icon="Solid_X" Foreground="red" Width="20" FontSize="15"
                         Margin="0"
                         Padding="2" Background="Transparent" BorderBrush="Transparent"
-                        Visibility="{Binding EditMode}"
+                        Visibility="{c:Binding EditMode}"
                         Command="{Binding CancelCommand}" />
             </StackPanel>
         </Border>

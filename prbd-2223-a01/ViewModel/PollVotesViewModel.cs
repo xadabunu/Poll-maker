@@ -29,5 +29,8 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public void AskEditMode(bool editMode) {
         EditMode = editMode;
+        foreach (var vm in ParticipantsVM)
+            if (vm.Participant == CurrentUser)
+                vm.Changes();
     }
 }

@@ -18,7 +18,7 @@
 
         <StackPanel VerticalAlignment="Center">
             <fa:FontAwesome Icon="{Binding VotedIcon}"
-                            Foreground="{Binding VotedColor}"
+                            Foreground="{c:Binding VotedColor}"
                             FontSize="25" Visibility="{c:Binding !EditMode}"/>
 
             <Button Padding="2" BorderBrush="Transparent"
@@ -26,9 +26,27 @@
                     Background="Transparent" Width="32"
                     Command="{Binding ChangeVote}">
                 <fa:FontAwesome Icon="Solid_Check"
-                                Foreground="{c:Binding 'IsVoted ? media:Brushes.Green : media:Brushes.LightGray'}"
+                                Foreground="{c:Binding 'VotedYes ? media:Brushes.Green : media:Brushes.LightGray'}"
                                 FontSize="25"
                                 ToolTip="{Binding VotedToolTip}" />
+            </Button>
+            <Button Padding="2" BorderBrush="Transparent"
+                    Visibility="{c:Binding EditMode}"
+                    Background="Transparent" Width="32"
+                    Command="{c:Binding ChangeVote}">
+                <fa:FontAwesome Icon="Solid_CircleQuestion"
+                                Foreground="{Binding 'VotedMaybe ? media:Brushes.Orange : media:Brushes.Lightgray'}"
+                                FontSize="25"
+                                ToolTip="{Binding VotedToolTip}"/>
+            </Button>
+            <Button Padding="2" BorderBrush="Transparent"
+                    Visibility="{c:Binding EditMode}"
+                    Background="Transparent" Width="32"
+                    Command="{Binding ChangeVote}">
+                <fa:FontAwesome Icon="Solid_X"
+                                Foreground="{Binding 'VotedNo ? media:Brushes.Red : media:Brushes.Lightgray'}"
+                                FontSize="25"
+                                ToolTip="{Binding VotedToolTip}"/>
             </Button>
         </StackPanel>
 

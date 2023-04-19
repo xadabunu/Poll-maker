@@ -34,17 +34,17 @@ public class MainRowViewModel : ViewModelCommon {
 
     private bool _editMode;
     public bool EditMode {
-        get => _editMode;
+        get => App.CurrentUser == Participant && _editMode;
         set => SetProperty(ref _editMode, value, EditModeChanged);
     }
 
-    public bool Editable => !EditMode && Participant == App.CurrentUser;
+    public bool ParentEditMode => _pollVotesViewModel.EditMode;
+    public bool Editable => Participant == App.CurrentUser && !EditMode;
 
     private void EditModeChanged() {
-
         if (Participant == App.CurrentUser)
-            foreach (var Mcvm in _cellsVm)
-                Mcvm.EditMode = EditMode;
+            foreach (var CellVM in _cellsVm)
+                CellVM.EditMode = EditMode;
         _pollVotesViewModel.AskEditMode(EditMode);
     }
 
@@ -54,6 +54,10 @@ public class MainRowViewModel : ViewModelCommon {
         private set => SetProperty(ref _cellsVm, value);
     }
 
+    public void Changes() {
+        RaisePropertyChanged(nameof(Editable));
+    }
+
     private void RefreshChoices() {
         CellsVM = Choices
             .Select(c => new MainCellViewModel(Participant, c))
@@ -61,10 +65,14 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Save() {
-
+        EditMode = false;
     }
 
-    private void Cancel() {}
+    private void Cancel() {
+        EditMode = false;
+    }
 
-    private void Delete() {}
+    private void Delete() {
+        EditMode = false;
+    }
 }
