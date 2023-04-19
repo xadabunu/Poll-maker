@@ -8,13 +8,35 @@ namespace MyPoll.ViewModel;
 
 public class MainCellViewModel : ViewModelCommon {
 
-    public ICommand ChangeVote { get; set; }
+    public ICommand ChangeVoteCommand { get; set; }
 
     public MainCellViewModel(User participant, Choice choice) {
         IsVoted = Context.Votes.Any(v => v.User == participant && v.Choice == choice);
-        _vote = Context.Votes.FirstOrDefault(v => v.User == participant && v.Choice == choice);
+        Vote = Context.Votes.FirstOrDefault(v => v.User == participant && v.Choice == choice) ?? new Vote {
+            Choice = choice,
+            User = participant,
+            Value = VoteValue.None
+        };
 
-        ChangeVote = new RelayCommand(() => IsVoted = !IsVoted);
+        ChangeVoteCommand = new RelayCommand<string>((s) => ChangeVote(s));
+    }
+
+    private void ChangeVote(string str) {
+        VoteValue val = str switch {
+            "Yes" => VoteValue.Yes,
+            "Maybe" => VoteValue.Maybe,
+            "No" => VoteValue.No,
+            _ => VoteValue.None
+        };
+
+        Vote.Value = Vote.Value == val ? VoteValue.None : val;
+        IsVoted = true;
+
+        RaisePropertyChanged(nameof(VotedYes));
+        RaisePropertyChanged(nameof(VotedNo));
+        RaisePropertyChanged(nameof(VotedMaybe));
+        RaisePropertyChanged(nameof(VotedIcon));
+        RaisePropertyChanged(nameof(VotedColor));
     }
 
     private Vote _vote;
@@ -63,15 +85,7 @@ public class MainCellViewModel : ViewModelCommon {
         }
     }
 
-    public bool VotedYes {
-        get => _vote.Value == VoteValue.Yes;
-    }
-
-    public bool VotedMaybe {
-        get => _vote.Value == VoteValue.Maybe;
-    }
-
+    public bool VotedYes => Vote.Value == VoteValue.Yes;
+    public bool VotedMaybe => Vote.Value == VoteValue.Maybe;
     public bool VotedNo => Vote.Value == VoteValue.No;
-
-    public string VotedToolTip => IsVoted ? "Yes" : "No";
 }

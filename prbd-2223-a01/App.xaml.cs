@@ -10,7 +10,8 @@ public partial class App : ApplicationBase<User, MyPollContext> {
     public enum Messages {
         MSG_SIGNUP,
         MSG_LOGIN,
-        MSG_POLL_SELECTED
+        MSG_POLL_SELECTED,
+        MSG_CANCEL_SIGNUP
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -21,10 +22,12 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         });
         Register(this, Messages.MSG_SIGNUP, () =>
             NavigateTo<SignupViewModel, User, MyPollContext>());
+        Register(this, Messages.MSG_CANCEL_SIGNUP, () =>
+            NavigateTo<LoginViewModel, User, MyPollContext>());
     }
     private static void PrepareDatabase() {
         // Clear database and seed data
-        //Context.Database.EnsureDeleted();
+        Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
 
         // Cold start

@@ -45,11 +45,10 @@ public class SignupViewModel : ViewModelCommon {
         SignUp = new RelayCommand(() => Login(), () => Email != null &&
                                                        Password !=null
                                                        && !HasErrors);
-        CancelCommand = new RelayCommand<WindowBase>((win) => Cancel(win));
+        CancelCommand = new RelayCommand(() => NotifyColleagues(App.Messages.MSG_CANCEL_SIGNUP));
     }
 
     private void Login() {
-
         var user = new User {
             FullName = _fullName,
             Email = _email,
@@ -57,11 +56,6 @@ public class SignupViewModel : ViewModelCommon {
         };
         user.Save();
         NotifyColleagues(App.Messages.MSG_LOGIN, user);
-    }
-
-    private void Cancel(WindowBase win) {
-        new LoginView().Show();
-        win.Close();
     }
 
     public override bool Validate() {
