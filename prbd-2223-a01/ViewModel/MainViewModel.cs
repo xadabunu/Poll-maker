@@ -16,6 +16,6 @@ public class MainViewModel : ViewModelCommon {
     }
 
     private void Logout() {
-        Console.WriteLine("logout");
+        NotifyColleagues(App.Messages.MSG_LOGOUT);
     }
 }
