@@ -8,7 +8,8 @@ namespace MyPoll.Model;
 public enum VoteValue {
     No = -2,
     Maybe = 1,
-    Yes = 2
+    Yes = 2,
+    None = 0
 }
 
 public class Vote : EntityBase<MyPollContext> {
@@ -29,11 +30,4 @@ public class Vote : EntityBase<MyPollContext> {
 
     [Required]
     public VoteValue Value { get; set; }
-
-    public Vote() { }
-    public Vote(int userId, int choiceId, VoteValue value) {
-        UserId = userId;
-        ChoiceId = choiceId;
-        Value = value;
-    }
 }

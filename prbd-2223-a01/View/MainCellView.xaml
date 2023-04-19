@@ -24,29 +24,32 @@
             <Button Padding="2" BorderBrush="Transparent"
                     Visibility="{c:Binding EditMode}"
                     Background="Transparent" Width="32"
-                    Command="{Binding ChangeVote}">
+                    Command="{Binding ChangeVoteCommand}"
+                    CommandParameter="Yes">
                 <fa:FontAwesome Icon="Solid_Check"
                                 Foreground="{c:Binding 'VotedYes ? media:Brushes.Green : media:Brushes.LightGray'}"
                                 FontSize="25"
-                                ToolTip="{Binding VotedToolTip}" />
+                                ToolTip="Yes" />
             </Button>
             <Button Padding="2" BorderBrush="Transparent"
                     Visibility="{c:Binding EditMode}"
                     Background="Transparent" Width="32"
-                    Command="{c:Binding ChangeVote}">
+                    Command="{c:Binding ChangeVoteCommand}"
+                    CommandParameter="Maybe">
                 <fa:FontAwesome Icon="Solid_CircleQuestion"
-                                Foreground="{Binding 'VotedMaybe ? media:Brushes.Orange : media:Brushes.Lightgray'}"
+                                Foreground="{c:Binding 'VotedMaybe ? media:Brushes.Orange : media:Brushes.LightGray'}"
                                 FontSize="25"
-                                ToolTip="{Binding VotedToolTip}"/>
+                                ToolTip="Maybe"/>
             </Button>
             <Button Padding="2" BorderBrush="Transparent"
                     Visibility="{c:Binding EditMode}"
                     Background="Transparent" Width="32"
-                    Command="{Binding ChangeVote}">
+                    Command="{Binding ChangeVoteCommand}"
+                    CommandParameter="No">
                 <fa:FontAwesome Icon="Solid_X"
-                                Foreground="{Binding 'VotedNo ? media:Brushes.Red : media:Brushes.Lightgray'}"
+                                Foreground="{c:Binding 'VotedNo ? media:Brushes.Red : media:Brushes.LightGray'}"
                                 FontSize="25"
-                                ToolTip="{Binding VotedToolTip}"/>
+                                ToolTip="No"/>
             </Button>
         </StackPanel>
 
