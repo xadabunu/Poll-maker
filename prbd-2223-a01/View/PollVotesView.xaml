@@ -26,6 +26,9 @@
         <DockPanel Grid.Row="1">
             <local:MainGridView />
         </DockPanel>
+        <DockPanel Grid.Row="2">
+            <local:CommentsView/>
+        </DockPanel>
     </Grid>
 </prbdFramework:UserControlBase>
 
