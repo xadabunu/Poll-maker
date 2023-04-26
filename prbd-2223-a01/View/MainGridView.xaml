@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance Type=viewModel:PollVotesViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
 
         <StackPanel Orientation="Vertical" Height="Auto"
                     Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">

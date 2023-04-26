@@ -4,32 +4,49 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:MyPoll.View"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=vm:PollVotesViewModel, IsDesignTimeCreatable=False}">
     <StackPanel>
+
         <TextBlock Text="Comments" FontWeight="Bold" FontSize="20" Margin="5"/>
-        <TextBlock Margin="5 0 5 5">
-            <Hyperlink>
+
+        <TextBlock Margin="5 0 5 5" Visibility="{c:Binding !WritingMode}">
+            <Hyperlink  Command="{Binding AddCommentCommand}">
                 <Run Text="Add a comment"/>
             </Hyperlink>
         </TextBlock>
+
+        <DockPanel Visibility="{c:Binding WritingMode}">
+            <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
+                     Width="230" Height="40" Margin="5"/>
+            <Button Content="Post" Margin="5" Padding="5"
+                    Command="{Binding PostCommand}" DockPanel.Dock="Right" Width="50"/>
+        </DockPanel>
+
         <ItemsControl ItemsSource="{Binding Poll.Comments, Mode=OneWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="0 1 0 1">
+                    <Border BorderThickness="0 0 0 2" BorderBrush="Gainsboro" Name="Border"
+                            Padding="5">
                     <StackPanel>
                         <TextBlock Text="{Binding Text}"/>
                         <TextBlock>
                             <Run Text="- "/>
                             <Run Text="{Binding Author.FullName}" Foreground="Blue"/>
-                            <Run Text=" "></Run>
+                            <Run Text=" "/>
                             <Run Text="{Binding CreationDate}" Foreground="DarkGray"/>
                         </TextBlock>
                     </StackPanel>
                     </Border>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=PreviousData}}" Value="{x:Null}">
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0 2 0 2"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

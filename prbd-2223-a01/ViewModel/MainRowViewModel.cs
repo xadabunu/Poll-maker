@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 using MyPoll.Model;
 using MyPoll.View;
 using PRBD_Framework;
@@ -70,12 +71,14 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Cancel() {
+        Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
         RefreshChoices();
         EditMode = false;
     }
 
     private void Delete() {
         CellsVM.ToList().ForEach(vm => vm.Vote.Value = VoteValue.None);
+        Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
         Context.SaveChanges();
         RefreshChoices();
     }

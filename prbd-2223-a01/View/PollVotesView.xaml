@@ -6,11 +6,14 @@
              xmlns:local="clr-namespace:MyPoll.View"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=vm:PollVotesViewModel, IsDesignTimeCreatable=False}">
+    <ScrollViewer VerticalScrollBarVisibility="Hidden" Padding="10">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -29,6 +32,11 @@
         <DockPanel Grid.Row="2">
             <local:CommentsView/>
         </DockPanel>
+        <Button Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Margin="0 0 10 10" Content="Edit" Padding="5 3 5 3"
+                Visibility="{c:Binding IsCreator}"
+                Command="{Binding EditPollCommand}"/>
     </Grid>
+    </ScrollViewer>
 </prbdFramework:UserControlBase>
 

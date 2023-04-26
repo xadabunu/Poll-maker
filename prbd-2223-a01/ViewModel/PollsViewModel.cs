@@ -23,18 +23,17 @@ public class PollViewModel : ViewModelCommon {
     }
 
     public PollViewModel() {
-        OnRefreshData(); //?
+        OnRefreshData();
         ClearFilter = new RelayCommand(() => Filter = "");
         OpenView = new RelayCommand<Poll>(poll =>
             NotifyColleagues(App.Messages.MSG_POLL_SELECTED, poll));
     }
 
-    protected override void OnRefreshData() {
+    protected sealed override void OnRefreshData() {
         Polls = new ObservableCollection<Poll>(Context.Polls
             .Where(p => p.Participants.Any(part => part.Id == CurrentUser.Id))
-            .Union(Context.Polls.Where(p => p.Creator == CurrentUser)));
-
-        // Orderby ?
+            .Union(Context.Polls.Where(p => p.Creator == CurrentUser))
+            .OrderBy(p => p.Title));
 
         if (Filter.IsNullOrEmpty()) return;
         var query =
