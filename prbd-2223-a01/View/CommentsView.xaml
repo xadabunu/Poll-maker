@@ -1,4 +1,5 @@
 <prbdFramework:UserControlBase x:Class="MyPoll.View.CommentsView"
+                               x:Name="view"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -47,10 +48,8 @@
                             <Run Text="{Binding CreationDate}" Foreground="DarkGray"/>
                             <Button fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red"
                                     Background="Transparent" FontSize="15" BorderBrush="Transparent"
-                                    Visibility="{Binding IsCreator,
-                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type vm:PollVotesViewModel}}}"
-                                    Command="{c:Binding DeleteCommentCommand,
-                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type vm:PollVotesViewModel}}}"
+                                    Visibility="{c:Binding DataContext.IsCreator, ElementName=view}"
+                                    Command="{c:Binding  DataContext.DeleteCommentCommand, ElementName=view}"
                                     CommandParameter="{Binding}"/>
                         </TextBlock>
                     </StackPanel>

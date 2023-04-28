@@ -32,8 +32,6 @@ public class PollVotesViewModel : ViewModelCommon {
             Context.Comments.Remove(comment);
             Context.SaveChanges();
             Comments.Remove(comment);
-            Context.SaveChanges();
-            Console.WriteLine("no");
         });
 
     }
@@ -49,14 +47,9 @@ public class PollVotesViewModel : ViewModelCommon {
         ParticipantsVM.ForEach(vm => vm.Changes());
     }
 
-    public bool IsCreator {
-        get {
-            Console.WriteLine("it gets " + (CurrentUser == Poll.Creator));
-            return CurrentUser == Poll.Creator;
-        }
-    }
+    public bool IsCreator => CurrentUser == Poll.Creator;
 
-    public bool CanEdit => IsCreator && !EditPollMode;
+        public bool CanEdit => IsCreator && !EditPollMode;
 
     private bool _writingMode = false;
     public bool WritingMode {
