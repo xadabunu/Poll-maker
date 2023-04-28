@@ -50,6 +50,8 @@ public class Poll : EntityBase<MyPollContext> {
         get => VoteCount + " vote" + (VoteCount > 1 ? "s" : "");
     }
 
+    public bool IsClosed => Status == PollStatus.Closed;
+
     [NotMapped]
     public ICollection<Choice> BestChoices {
         get => VoteCount == 0 ? null : Choices.Where(c => c.Score >= Choices.Max(ch => ch.Score)).ToList();

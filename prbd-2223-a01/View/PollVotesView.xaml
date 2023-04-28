@@ -17,8 +17,19 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DockPanel>
+        <Border Visibility="{c:Binding Poll.IsClosed}"
+                BorderBrush="Transparent" CornerRadius="10"
+                Background="#f5dede" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="This poll has been closed!" FontWeight="Bold" FontSize="12"
+                           VerticalAlignment="Center" Padding="5"/>
+                <Button Visibility="{c:Binding IsCreator}" Content="Reopen"
+                        Height="20"/>
+            </StackPanel>
+        </Border>
+        <DockPanel Grid.Row="1">
             <TextBlock>
                 <Run Text="{Binding Poll.Title}" FontSize="20" FontWeight="Bold"/>
                 <Run Text=" (Created by " FontStyle="Italic"/>
@@ -26,16 +37,25 @@
                 <Run Text=")" FontStyle="Italic"/>
             </TextBlock>
         </DockPanel>
-        <DockPanel Grid.Row="1" Visibility="{c:Binding !EditPollMode}">
+        <DockPanel Grid.Row="2" Visibility="{c:Binding !EditPollMode}">
             <local:MainGridView />
         </DockPanel>
-        <DockPanel Grid.Row="2" Visibility="{c:Binding !EditPollMode}">
+        <DockPanel Grid.Row="3" Visibility="{c:Binding !EditPollMode}">
             <local:CommentsView/>
         </DockPanel>
-        <Button Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Margin="0 0 10 5" Content="Edit" Padding="5 3 5 3"
-                Visibility="{c:Binding CanEdit}"
-                Command="{Binding EditPollCommand}"/>
+        <StackPanel Grid.Row="4" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    Visibility="{c:Binding CanEdit}" Orientation="Horizontal">
+            <Button Content="Edit" Visibility="{c:Binding !EditPollMode}"
+                    Width="70" Height="20"
+                    Command="{Binding EditPollCommand}"/>
+            <Button Content="Delete" Visibility="{c:Binding !EditPollMode}"
+                    Width="70" Height="20" Margin="10 0 0 0"/>
+        </StackPanel>
+
+        <UserControl Grid.Row="4">
+            <local:EditPollView Visibility="{c:Binding EditPollMode}"/>
+        </UserControl>
+
     </Grid>
     </ScrollViewer>
 </prbdFramework:UserControlBase>

@@ -34,7 +34,7 @@
                     Command="{Binding PostCommand}" DockPanel.Dock="Right"/>
         </Grid>
 
-        <ItemsControl ItemsSource="{Binding Comments}">
+        <ItemsControl ItemsSource="{Binding Comments}" Margin="0 0 0 10">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0 0 0 1" BorderBrush="Gainsboro" Name="Border"

@@ -34,6 +34,15 @@ public class PollVotesViewModel : ViewModelCommon {
             Comments.Remove(comment);
         });
 
+        /* ------------------ Edit/Add part ------------------ */
+
+        EditTitle = Poll.Title;
+        CancelCommand = new RelayCommand(() => EditPollMode = false);
+        Participants = new ObservableCollection<User>(Poll.Participants);
+        DeleteParticipantCommand = new RelayCommand<User>(u => {
+            Participants.Remove(u);
+            //Context.Polls.Find(Poll).Participants.Remove(u);
+        });
     }
 
     public List<Choice> Choices => Poll.Choices.OrderBy(c => c.Label).ToList();
@@ -49,7 +58,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public bool IsCreator => CurrentUser == Poll.Creator;
 
-        public bool CanEdit => IsCreator && !EditPollMode;
+    public bool CanEdit => IsCreator && !EditPollMode;
 
     private bool _writingMode = false;
     public bool WritingMode {
@@ -79,8 +88,29 @@ public class PollVotesViewModel : ViewModelCommon {
 
     private bool _editPollMode = false;
 
+    /* -------------------------- Add/Edit -------------------------- */
+
+    public ICommand SaveCommand { get; }
+    public ICommand CancelCommand { get; }
+    public ICommand DeleteParticipantCommand { get; }
+    public ObservableCollection<User> Participants { get; set; }
+
     public bool EditPollMode {
         get => _editPollMode;
         set => SetProperty(ref _editPollMode, value);
+    }
+
+    private string _editTitle;
+    public string EditTitle {
+        get => _editTitle;
+        set => SetProperty(ref _editTitle, value, () => Validate());
+    }
+
+    public override bool Validate() {
+        if (EditTitle.IsNullOrEmpty())
+            AddError(nameof(EditTitle), "Title required");
+        else if (EditTitle.Length < 10)
+            AddError(nameof(EditTitle), "Tilte length must be at least 10 char");
+        return !HasErrors;
     }
 }
