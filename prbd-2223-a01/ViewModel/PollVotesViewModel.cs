@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Microsoft.IdentityModel.Tokens;
 using MyPoll.Model;
@@ -10,6 +11,8 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand EditPollCommand { get; }
     public ICommand AddCommentCommand { get; }
     public ICommand PostCommand { get; }
+    public ICommand DeleteCommentCommand { get; }
+    public ObservableCollection<Comment> Comments { get; set; }
 
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
@@ -17,9 +20,22 @@ public class PollVotesViewModel : ViewModelCommon {
         var participants = poll.Participants.OrderBy(p => p.FullName);
 
         _participantsVM = participants.Select(p => new MainRowViewModel(this, p, poll.Choices.ToList())).ToList();
-        EditPollCommand = new RelayCommand(EditPollAction);
+        EditPollCommand = new RelayCommand(() => EditPollMode = true);
         AddCommentCommand = new RelayCommand(() => WritingMode = true);
         PostCommand = new RelayCommand(() => PostAction(), () => !Comment.IsNullOrEmpty());
+
+        Comments = new ObservableCollection<Comment>(Context.Comments
+            .Where(c => c.Poll == poll)
+            .OrderByDescending(c => c.CreationDate));
+
+        DeleteCommentCommand = new RelayCommand<Comment>(comment => {
+            Context.Comments.Remove(comment);
+            Context.SaveChanges();
+            Comments.Remove(comment);
+            Context.SaveChanges();
+            Console.WriteLine("no");
+        });
+
     }
 
     public List<Choice> Choices => Poll.Choices.OrderBy(c => c.Label).ToList();
@@ -33,7 +49,14 @@ public class PollVotesViewModel : ViewModelCommon {
         ParticipantsVM.ForEach(vm => vm.Changes());
     }
 
-    public bool IsCreator => CurrentUser == Poll.Creator;
+    public bool IsCreator {
+        get {
+            Console.WriteLine("it gets " + (CurrentUser == Poll.Creator));
+            return CurrentUser == Poll.Creator;
+        }
+    }
+
+    public bool CanEdit => IsCreator && !EditPollMode;
 
     private bool _writingMode = false;
     public bool WritingMode {
@@ -47,27 +70,24 @@ public class PollVotesViewModel : ViewModelCommon {
         set => SetProperty(ref _comment, value);
     }
 
-    private void RefreshComments() {
-        Poll.Comments = Context.Comments
-            .Where(c => c.Poll == Poll)
-            .OrderByDescending(c => c.CreationDate)
-            .ToList();
-    }
-
-    private void EditPollAction() {
-
-    }
     private void PostAction() {
-        WritingMode = false;
-        Poll.Comments.Add(new Comment
-        {
+        Comment c = new Comment {
             AuthorId = CurrentUser.Id,
             PollId = Poll.Id,
             Text = Comment,
             CreationDate = DateTime.Now
-        });
+        };
+        Comments.Insert(0, c);
+        Context.Comments.Add(c);
         Context.SaveChanges();
-        RefreshComments();
+        WritingMode = false;
         Comment = "";
+    }
+
+    private bool _editPollMode = false;
+
+    public bool EditPollMode {
+        get => _editPollMode;
+        set => SetProperty(ref _editPollMode, value);
     }
 }

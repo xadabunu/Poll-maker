@@ -24,10 +24,14 @@
         </Style>
     </UserControl.Resources>
     <StackPanel SnapsToDevicePixels="True">
-        <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
-            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="250" Margin="5" />
-            <Button Content="Clear" Command="{Binding ClearFilter}" Margin="5" />
-        </StackPanel>
+        <Grid Margin="5 5 5 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+            <Button Grid.Column="1" Content="Clear" Command="{Binding ClearFilter}" Margin="5" />
+        </Grid>
         <ListView Name="ListView" ItemsSource="{Binding Polls}">
 
             <b:Interaction.Triggers>

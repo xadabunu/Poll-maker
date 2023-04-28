@@ -71,14 +71,18 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Cancel() {
-        Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
         RefreshChoices();
         EditMode = false;
     }
 
     private void Delete() {
-        CellsVM.ToList().ForEach(vm => vm.Vote.Value = VoteValue.None);
-        Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
+        // CellsVM.ToList().ForEach(vm => vm.Vote.Value = VoteValue.None);
+        CellsVM.ToList().ForEach(vm => {
+            if (vm.Vote.Value != VoteValue.None)
+                Context.Votes.Remove(vm.Vote);
+        });
+
+        // Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
         Context.SaveChanges();
         RefreshChoices();
     }

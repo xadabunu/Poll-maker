@@ -12,7 +12,8 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         MSG_LOGIN,
         MSG_POLL_SELECTED,
         MSG_CANCEL_SIGNUP,
-        MSG_LOGOUT
+        MSG_LOGOUT,
+        MSG_REFRESH_COMMENTS
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -32,7 +33,7 @@ public partial class App : ApplicationBase<User, MyPollContext> {
     }
     private static void PrepareDatabase() {
         // Clear database and seed data
-        //Context.Database.EnsureDeleted();
+        Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
 
         // Cold start

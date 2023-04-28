@@ -5,11 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:MyPoll.View"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+             xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=vm:PollVotesViewModel, IsDesignTimeCreatable=False}">
+
     <StackPanel>
 
         <TextBlock Text="Comments" FontWeight="Bold" FontSize="20" Margin="5"/>
@@ -20,31 +22,43 @@
             </Hyperlink>
         </TextBlock>
 
-        <DockPanel Visibility="{c:Binding WritingMode}">
+        <Grid Visibility="{c:Binding WritingMode}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
-                     Width="230" Height="40" Margin="5"/>
-            <Button Content="Post" Margin="5" Padding="5"
-                    Command="{Binding PostCommand}" DockPanel.Dock="Right" Width="50"/>
-        </DockPanel>
+                     Margin="5" Height="50"/>
+            <Button Grid.Column="1" Content="Post" Margin="5" Padding="5" VerticalAlignment="Top"
+                    Command="{Binding PostCommand}" DockPanel.Dock="Right"/>
+        </Grid>
 
-        <ItemsControl ItemsSource="{Binding Poll.Comments, Mode=OneWay}">
+        <ItemsControl ItemsSource="{Binding Comments}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="0 0 0 2" BorderBrush="Gainsboro" Name="Border"
+                    <Border BorderThickness="0 0 0 1" BorderBrush="Gainsboro" Name="Border"
                             Padding="5">
                     <StackPanel>
-                        <TextBlock Text="{Binding Text}"/>
+                        <TextBlock Text="{Binding Text}" TextWrapping="WrapWithOverflow"/>
                         <TextBlock>
                             <Run Text="- "/>
                             <Run Text="{Binding Author.FullName}" Foreground="Blue"/>
                             <Run Text=" "/>
                             <Run Text="{Binding CreationDate}" Foreground="DarkGray"/>
+                            <Button fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red"
+                                    Background="Transparent" FontSize="15" BorderBrush="Transparent"
+                                    Visibility="{Binding IsCreator,
+                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type vm:PollVotesViewModel}}}"
+                                    Command="{c:Binding DeleteCommentCommand,
+                                        RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type vm:PollVotesViewModel}}}"
+                                    CommandParameter="{Binding}"/>
                         </TextBlock>
                     </StackPanel>
                     </Border>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=PreviousData}}" Value="{x:Null}">
-                            <Setter TargetName="Border" Property="BorderThickness" Value="0 2 0 2"/>
+                        <DataTrigger Binding="{Binding
+                            RelativeSource={RelativeSource Mode=PreviousData}}" Value="{x:Null}">
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0 1 0 1"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>

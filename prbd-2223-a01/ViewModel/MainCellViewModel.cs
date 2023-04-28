@@ -30,7 +30,7 @@ public class MainCellViewModel : ViewModelCommon {
         };
 
         Vote.Value = Vote.Value == val ? VoteValue.None : val;
-        IsVoted = true;
+        IsVoted = Vote.Value != VoteValue.None;
 
         RaisePropertyChanged(nameof(VotedYes));
         RaisePropertyChanged(nameof(VotedNo));

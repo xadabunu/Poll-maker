@@ -13,10 +13,10 @@
     <ScrollViewer VerticalScrollBarVisibility="Hidden" Padding="10">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel>
             <TextBlock>
@@ -26,15 +26,15 @@
                 <Run Text=")" FontStyle="Italic"/>
             </TextBlock>
         </DockPanel>
-        <DockPanel Grid.Row="1">
+        <DockPanel Grid.Row="1" Visibility="{c:Binding !EditPollMode}">
             <local:MainGridView />
         </DockPanel>
-        <DockPanel Grid.Row="2">
+        <DockPanel Grid.Row="2" Visibility="{c:Binding !EditPollMode}">
             <local:CommentsView/>
         </DockPanel>
         <Button Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Margin="0 0 10 10" Content="Edit" Padding="5 3 5 3"
-                Visibility="{c:Binding IsCreator}"
+                Margin="0 0 10 5" Content="Edit" Padding="5 3 5 3"
+                Visibility="{c:Binding CanEdit}"
                 Command="{Binding EditPollCommand}"/>
     </Grid>
     </ScrollViewer>
