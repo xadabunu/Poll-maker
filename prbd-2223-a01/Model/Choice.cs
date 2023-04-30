@@ -15,11 +15,6 @@ public class Choice : EntityBase<MyPollContext> {
     public virtual ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
 
     public Choice() {}
-    public Choice (int id, int pollId, string label) {
-        Id = id;
-        PollId = pollId;
-        Label = label;
-    }
 
     public double Score {
         get {

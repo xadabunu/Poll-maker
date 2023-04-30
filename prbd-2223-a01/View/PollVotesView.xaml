@@ -37,7 +37,7 @@
                 <Run Text=")" FontStyle="Italic"/>
             </TextBlock>
         </DockPanel>
-        <DockPanel Grid.Row="2" Visibility="{c:Binding !EditPollMode}">
+        <DockPanel Grid.Row="2" Visibility="{c:Binding ShowGrid}">
             <local:MainGridView />
         </DockPanel>
         <DockPanel Grid.Row="3" Visibility="{c:Binding !EditPollMode}">

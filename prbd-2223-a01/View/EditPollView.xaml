@@ -7,8 +7,9 @@
              xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="400" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=vm:PollVotesViewModel, IsDesignTimeCreatable=False}">
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -29,17 +30,19 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Label Content="Poll Name: "/>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EditTitle}" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     Text="{Binding EditTitle}" VerticalAlignment="Center"/>
             <Label Grid.Column="0" Grid.Row="1" Content="Type: "/>
-            <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
-                <ComboBoxItem Content="Multiple" IsSelected="True"/>
+            <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
+                      SelectedIndex="{Binding EditType}">
+                <ComboBoxItem Content="Multiple"/>
                 <ComboBoxItem Content="Simple"/>
             </ComboBox>
             <Label Grid.Column="0" Grid.Row="2" Content="Creator: "/>
             <Label Grid.Column="1" Grid.Row="2" Content="{Binding Poll.Creator.FullName}"
                    VerticalAlignment="Center"/>
             <Label Grid.Column="0" Grid.Row="3" Content="Is closed: "/>
-            <CheckBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Margin="0 2 0 0 "></CheckBox>
+            <CheckBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Margin="0 2 0 0 "/>
 
         </Grid>
 
@@ -56,7 +59,12 @@
             </Grid.RowDefinitions>
 
             <Label Content="Participants" FontWeight="Bold" FontSize="13"/>
-            <Border Grid.Column="0" Grid.Row="1" BorderThickness="1" BorderBrush="Black">
+            <Label Grid.Column="0" Grid.Row="1" Content="No participant yet"
+                   Foreground="Red" FontWeight="Bold"
+                   Visibility="{c:Binding NoParticipant}"/>
+            <Border Grid.Column="0" Grid.Row="1" Margin="5"
+                    Visibility="{c:Binding !NoParticipant}"
+                    BorderThickness="1" BorderBrush="Black">
                 <ItemsControl ItemsSource="{Binding Participants}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -71,13 +79,80 @@
                                 </TextBlock>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"
                                         fap:FontAwesome.Icon="Regular_TrashCan" Foreground="Red"
-                                        Command="{Binding DataContext.DeleteParticipantCommand, ElementName=view}"/>
+                                        BorderBrush="Transparent" Background="Transparent"
+                                        Command="{Binding DataContext.DeleteParticipantCommand, ElementName=view}"
+                                        CommandParameter="{Binding}"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Border>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ComboBox VerticalAlignment="Center"
+                          Margin="5" Padding="2"
+                          ItemsSource="{Binding Addables}"
+                          DisplayMemberPath="FullName" SelectedItem="{Binding Added}">
+                </ComboBox>
+                <Button Grid.Column="1" Content="Add" VerticalAlignment="Center"
+                        Command="{Binding AddParticipantCommand}"
+                        CommandParameter="{Binding Added}"/>
+            </Grid>
+            <StackPanel Grid.Row="3"
+                        Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Add My Self" VerticalAlignment="Center"
+                        Margin="5" Padding="2"/>
+                <Button Content="Add Everybody" VerticalAlignment="Center"
+                        Margin="5" Padding="2"/>
+            </StackPanel>
+
             <Label Grid.Column="1" Content="Choices"  FontWeight="Bold" FontSize="13"/>
+            <Label Content="No choice yet!" Foreground="Red" FontWeight="Bold"
+                   Grid.Column="1" Grid.Row="1" Visibility="{c:Binding NoChoice}"/>
+            <Border Grid.Column="1" Grid.Row="1" Margin="5" Visibility="{c:Binding !NoChoice}"
+                    BorderThickness="1" BorderBrush="Black">
+                <ItemsControl ItemsSource="{Binding EditChoices}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock TextWrapping="WrapWithOverflow" Margin="5">
+                                    <Run Text="{Binding Label}"/>
+                                    <Run Text=" (xx)"/>
+                                </TextBlock>
+                                <Button Grid.Column="1" HorizontalAlignment="Right"
+                                        fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black"
+                                        BorderBrush="Transparent" Background="Transparent"
+                                        Command="{Binding DataContext.EditChoiceCommand, ElementName=view}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Grid.Column="2" HorizontalAlignment="Right"
+                                        fap:FontAwesome.Icon="Regular_TrashCan" Foreground="Red"
+                                        BorderBrush="Transparent" Background="Transparent"
+                                        Command="{Binding DataContext.DeleteChoiceCommand, ElementName=view}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+            <Grid Grid.Column="1" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding NewChoice}"
+                         VerticalAlignment="Center" Margin="5"/>
+                <Button Grid.Column="1" Content="Add" VerticalAlignment="Center"
+                        Command="{Binding AddChoiceCommand}"/>
+            </Grid>
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">

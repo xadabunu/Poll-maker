@@ -79,18 +79,17 @@ public class LoginViewModel : ViewModelCommon {
         return user;
     }
 
-    private bool EmailExists() => Users.Any(u => u.Email == Email);
-
     private bool CheckPassword(User user) => user != null && SecretHasher.Verify(Password, user.Password);
 
     public override bool Validate() {
         ClearErrors();
+        User u = GetUserByEmail();
 
         if (Email.IsNullOrEmpty())
             AddError(nameof(Email), "required");
         else if (!Regex.IsMatch(Email, EmailRegex))
             AddError(nameof(Email), "invalid email address");
-        else if (!EmailExists())
+        else if (u == null)
             AddError(nameof(Email), "unknown email address");
         else {
             if (Password.IsNullOrEmpty())
