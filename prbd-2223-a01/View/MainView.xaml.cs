@@ -16,10 +16,10 @@ public partial class MainView : WindowBase {
                 Creator = App.CurrentUser
             }));
 
-        Register(App.Messages.MSG_NEW_POLL_CANCEL,
-            () => {
-                tabControl.CloseByTag(App.NEW_POLL_LABEL);
-            });
+        Register<Poll>(App.Messages.MSG_POLL_DELETED, poll => {
+            tabControl.CloseByTag(poll.Title);
+            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
+        });
     }
 
     private void OpenPollVotesTab(Poll poll) {

@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.IdentityModel.Tokens;
 using MyPoll.Model;
 using PRBD_Framework;
@@ -13,6 +15,7 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand PostCommand { get; }
     public ICommand DeleteCommentCommand { get; }
     public ICommand OpenPollCommand { get; }
+    public ICommand DeletePollCommand { get; }
     public ObservableCollection<Comment> Comments { get; set; }
 
     public PollVotesViewModel(Poll poll) {
@@ -48,6 +51,17 @@ public class PollVotesViewModel : ViewModelCommon {
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         });
 
+        DeletePollCommand = new RelayCommand(() => {
+            var result = MessageBox
+                .Show("This poll and all its comments and votes will be deleted.\nDo you confirm?",
+                    "Confirmation", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                Context.Polls.Remove(Poll);
+                Context.SaveChanges();
+                NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
+            }
+        });
+
         /* ------------------ Add/Edit part ------------------ */
 
         EditTitle = Poll.Title;
@@ -60,7 +74,7 @@ public class PollVotesViewModel : ViewModelCommon {
         CancelCommand = new RelayCommand(() => {
             if (_isNew) {
                 ClearErrors();
-                NotifyColleagues(App.Messages.MSG_NEW_POLL_CANCEL);
+                NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
             }
             EditPollMode = false;
             Participants = new ObservableCollection<User>(Poll.Participants);
@@ -73,6 +87,7 @@ public class PollVotesViewModel : ViewModelCommon {
             _editedChoice = null;
             NewChoice = "";
             ShowGrid = !NoParticipant && !NoChoice;
+            //clearChanges ?
         });
 
         Participants = new ObservableCollection<User>(Poll.Participants);
@@ -82,6 +97,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
         DeleteParticipantCommand = new RelayCommand<User>(u => {
             Participants.Remove(u);
+            Poll.Participants.Remove(u);
             NoParticipant = Participants.Count == 0;
             Addables.Add(u);
         });
@@ -96,12 +112,15 @@ public class PollVotesViewModel : ViewModelCommon {
         AddChoiceCommand = new RelayCommand(() => {
             EditChoices.Remove(_editedChoice);
             NoChoice = false;
-            EditChoices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
+            var c = new Choice { PollId = Poll.Id, Label = NewChoice };
+            EditChoices.Add(c);
+            Poll.Choices.Add(c);
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
 
         DeleteChoiceCommand = new RelayCommand<Choice>(choice => {
             EditChoices.Remove(choice);
+            Poll.Choices.Remove(choice);
             NoChoice = EditChoices.Count == 0;
         });
 
@@ -117,20 +136,10 @@ public class PollVotesViewModel : ViewModelCommon {
         SaveCommand = new RelayCommand(() => {
             if (_isNew)
                 Context.Polls.Add(Poll);
-            Participants.Where(p => !Poll.Participants.Contains(p)).ToList()
-                .ForEach(u => Poll.Participants.Add(u));
-            Poll.Participants.Where(p => !Participants.Contains(p)).ToList()
-                .ForEach(u => Poll.Participants.Remove(u));
-            Poll.Choices.Clear();
-            EditChoices.ToList().ForEach(choice => Poll.Choices.Add(choice));
-            Poll.Title = EditTitle;
-            Poll.Type = EditType == 0 ? PollType.Multiple : PollType.Simple;
-            Poll.Status = IsChecked ? PollStatus.Closed : PollStatus.Open;
-
             Context.SaveChanges();
             EditPollMode = false;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
-        }, ValidateTitle);
+        }, () => ValidateTitle() && HasChanges);
     }
 
     public List<Choice> Choices => Poll.Choices.OrderBy(c => c.Label).ToList();
@@ -228,7 +237,10 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public bool IsChecked {
         get => _isChecked;
-        set => SetProperty(ref _isChecked, value);
+        set {
+            SetProperty(ref _isChecked, value);
+            Poll.Status = IsChecked ? PollStatus.Closed : PollStatus.Open;
+        }
     }
 
     private bool _noChoice;
@@ -246,7 +258,10 @@ public class PollVotesViewModel : ViewModelCommon {
     private int _editType;
     public int EditType {
         get => _editType;
-        set => SetProperty(ref _editType, value);
+        set {
+            SetProperty(ref _editType, value);
+            Poll.Type = EditType == 0 ? PollType.Multiple : PollType.Simple;
+        }
     }
 
     public User Added {
@@ -280,6 +295,11 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Title length must be at least 7 char");
         else if (EditTitle == App.NEW_POLL_LABEL)
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
+        else {
+            Poll.Title = EditTitle;
+            return HasChanges;
+        }
+
         return !HasErrors;
     }
 
@@ -297,6 +317,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private void AddParticipantAction(User user) {
         NoParticipant = false;
         Participants.Add(user);
+        Poll.Participants.Add(user);
         Addables.Remove(user);
     }
 
