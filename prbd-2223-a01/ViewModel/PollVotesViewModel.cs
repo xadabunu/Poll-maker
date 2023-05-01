@@ -16,6 +16,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
+        EditPollMode = Poll.Title == "New Poll";
 
         var participants = poll.Participants.OrderBy(p => p.FullName);
 
@@ -25,7 +26,8 @@ public class PollVotesViewModel : ViewModelCommon {
             ShowGrid = false;
         });
         AddCommentCommand = new RelayCommand(() => WritingMode = true);
-        PostCommand = new RelayCommand(() => PostAction(), () => !Comment.IsNullOrEmpty());
+        PostCommand = new RelayCommand(() => PostAction(),
+            () => !Comment.IsNullOrEmpty());
 
         Comments = new ObservableCollection<Comment>(Context.Comments
             .Where(c => c.Poll == poll)
@@ -39,6 +41,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
         /* ------------------ Add/Edit part ------------------ */
 
+        _isNew = Poll.Title == "New Poll";
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
         NoChoice = Poll.Choices.Count == 0;
@@ -47,6 +50,8 @@ public class PollVotesViewModel : ViewModelCommon {
         ShowGrid = !EditPollMode && !NoChoice && !NoParticipant;
 
         CancelCommand = new RelayCommand(() => {
+            if (_isNew)
+                NotifyColleagues(App.Messages.MSG_LOGIN, CurrentUser);
             EditPollMode = false;
             Participants = new ObservableCollection<User>(Poll.Participants);
             EditChoices = new ObservableCollection<Choice>(Poll.Choices);
@@ -100,6 +105,8 @@ public class PollVotesViewModel : ViewModelCommon {
             Addables.ToList().ForEach(u => AddParticipantAction(u)));
 
         SaveCommand = new RelayCommand(() => {
+            if (_isNew)
+                Context.Polls.Add(Poll);
             Participants.Where(p => !Poll.Participants.Contains(p)).ToList()
                 .ForEach(u => Poll.Participants.Add(u));
             Poll.Participants.Where(p => !Participants.Contains(p)).ToList()
@@ -186,6 +193,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private Choice _editedChoice;
 
     private bool _isChecked;
+    private bool _isNew;
 
     public bool IsChecked {
         get => _isChecked;
@@ -239,6 +247,8 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Title required");
         else if (EditTitle.Length < 7)
             AddError(nameof(EditTitle), "Title length must be at least 7 char");
+        else if (EditTitle == "New Poll")
+            AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         return !HasErrors;
     }
 

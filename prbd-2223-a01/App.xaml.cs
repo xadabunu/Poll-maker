@@ -13,19 +13,24 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         MSG_POLL_SELECTED,
         MSG_CANCEL_SIGNUP,
         MSG_LOGOUT,
-        MSG_REFRESH_COMMENTS
+        MSG_NEW_POLL,
+        MSG_POLL_SAVED
     }
 
     protected override void OnStartup(StartupEventArgs e) {
         PrepareDatabase();
+
         Register<User>(this, Messages.MSG_LOGIN, user => {
             Login(user);
             NavigateTo<MainViewModel, User, MyPollContext>();
         });
+
         Register(this, Messages.MSG_SIGNUP, () =>
             NavigateTo<SignupViewModel, User, MyPollContext>());
+
         Register(this, Messages.MSG_CANCEL_SIGNUP, () =>
             NavigateTo<LoginViewModel, User, MyPollContext>());
+
         Register(this, Messages.MSG_LOGOUT, () => {
             Logout();
             NavigateTo<LoginViewModel, User, MyPollContext>();

@@ -6,7 +6,7 @@ using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
 
-public class PollViewModel : ViewModelCommon {
+public class PollsViewModel : ViewModelCommon {
 
     private ObservableCollection<Poll> _polls;
     public ObservableCollection<Poll> Polls {
@@ -15,6 +15,7 @@ public class PollViewModel : ViewModelCommon {
     }
     public ICommand ClearFilter { get; }
     public ICommand OpenView { get; }
+    public ICommand NewPollCommand { get; }
 
     private string _filter;
     public string Filter {
@@ -22,11 +23,13 @@ public class PollViewModel : ViewModelCommon {
         set => SetProperty(ref _filter, value, OnRefreshData);
     }
 
-    public PollViewModel() {
+    public PollsViewModel() {
         OnRefreshData();
         ClearFilter = new RelayCommand(() => Filter = "");
         OpenView = new RelayCommand<Poll>(poll =>
             NotifyColleagues(App.Messages.MSG_POLL_SELECTED, poll));
+        NewPollCommand = new RelayCommand(() =>
+            NotifyColleagues(App.Messages.MSG_NEW_POLL));
     }
 
     protected sealed override void OnRefreshData() {

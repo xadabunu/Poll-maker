@@ -9,6 +9,12 @@ public partial class MainView : WindowBase {
 
         Register<Poll>(App.Messages.MSG_POLL_SELECTED,
             poll => OpenPollVotesTab(poll));
+
+        Register(App.Messages.MSG_NEW_POLL,
+            () => OpenPollVotesTab(new Poll {
+                Title = "New Poll",
+                Creator = App.CurrentUser
+            }));
     }
 
     private void OpenPollVotesTab(Poll poll) {

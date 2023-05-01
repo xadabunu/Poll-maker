@@ -9,7 +9,7 @@
                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                    mc:Ignorable="d">
     <UserControl.DataContext>
-        <vm:PollViewModel />
+        <vm:PollsViewModel />
     </UserControl.DataContext>
 
     <UserControl.Resources>
@@ -55,5 +55,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListView>
+        <Button Content="New Poll" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                Margin="10" Command="{Binding NewPollCommand}"/>
     </StackPanel>
 </f:UserControlBase>
