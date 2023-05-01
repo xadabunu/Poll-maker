@@ -124,7 +124,7 @@ public class PollVotesViewModel : ViewModelCommon {
             NoChoice = EditChoices.Count == 0;
         });
 
-        AddParticipantCommand = new RelayCommand<User>(AddParticipantAction);
+        AddParticipantCommand = new RelayCommand<User>(AddParticipantAction, user => user != null);
 
         AddMySelfCommand = new RelayCommand(() => {
             AddParticipantAction(CurrentUser);
