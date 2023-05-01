@@ -43,10 +43,20 @@ public class PollVotesViewModel : ViewModelCommon {
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
+        IsChecked = Poll.Status == PollStatus.Closed;
         ShowGrid = !EditPollMode && !NoChoice && !NoParticipant;
 
         CancelCommand = new RelayCommand(() => {
             EditPollMode = false;
+            Participants = new ObservableCollection<User>(Poll.Participants);
+            EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+            Addables = new ObservableCollection<User>(
+                Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
+
+            IsChecked = Poll.Status == PollStatus.Closed;
+            EditType = Poll.Type == PollType.Multiple ? 0 : 1;
+            _editedChoice = null;
+            NewChoice = "";
             ShowGrid = !NoParticipant && !NoChoice;
         });
 
@@ -169,9 +179,9 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand AddParticipantCommand { get; }
     public ICommand AddMySelfCommand { get; }
     public ICommand AddEverybodyCommand { get; }
-    public ObservableCollection<User> Participants { get; set; }
+    public ObservableCollection<User> Participants { get; private set; }
     public ObservableCollection<User> Addables { get; set; }
-    public ObservableCollection<Choice> EditChoices { get; }
+    public ObservableCollection<Choice> EditChoices { get; private set; }
     private User _added;
     private Choice _editedChoice;
 
