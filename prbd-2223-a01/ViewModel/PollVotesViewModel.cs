@@ -128,10 +128,6 @@ public class PollVotesViewModel : ViewModelCommon {
             Poll.Status = IsChecked ? PollStatus.Closed : PollStatus.Open;
 
             Context.SaveChanges();
-            /*
-             * NotifyColleagues(App.Messages.MSG_POLL_SAVED);
-             * pour refresh la page (titre, ...) ?
-             */
             EditPollMode = false;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         }, ValidateTitle);
@@ -195,6 +191,19 @@ public class PollVotesViewModel : ViewModelCommon {
     protected sealed override void OnRefreshData() {
         Poll = Context.Polls.First(p => p.Id == Poll.Id);
         IsClosed = Poll.IsClosed;
+        Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
+
+        /* -------------------------- Add/Edit -------------------------- */
+
+        Participants = new ObservableCollection<User>(Poll.Participants);
+        Addables = new ObservableCollection<User>(
+            Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
+        EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+        EditTitle = Poll.Title;
+        EditType = Poll.Type == PollType.Multiple ? 0 : 1;
+        NoChoice = Poll.Choices.Count == 0;
+        NoParticipant = Poll.Participants.Count == 0;
+        IsChecked = Poll.Status == PollStatus.Closed;
     }
 
     /* -------------------------- Add/Edit -------------------------- */
