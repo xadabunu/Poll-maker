@@ -12,12 +12,14 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand AddCommentCommand { get; }
     public ICommand PostCommand { get; }
     public ICommand DeleteCommentCommand { get; }
+    public ICommand OpenPollCommand { get; }
     public ObservableCollection<Comment> Comments { get; set; }
 
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
         _isNew = Poll.Title == App.NEW_POLL_LABEL;
         EditPollMode = _isNew;
+        IsClosed = Poll.IsClosed;
 
         var participants = poll.Participants.OrderBy(p => p.FullName);
 
@@ -38,6 +40,12 @@ public class PollVotesViewModel : ViewModelCommon {
             Context.Comments.Remove(comment);
             Context.SaveChanges();
             Comments.Remove(comment);
+        });
+
+        OpenPollCommand = new RelayCommand(() => {
+            Poll.Status = PollStatus.Open;
+            Context.SaveChanges();
+            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         });
 
         /* ------------------ Add/Edit part ------------------ */
@@ -125,6 +133,7 @@ public class PollVotesViewModel : ViewModelCommon {
              * pour refresh la page (titre, ...) ?
              */
             EditPollMode = false;
+            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         }, ValidateTitle);
     }
 
@@ -140,6 +149,12 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     public bool IsCreator => CurrentUser == Poll.Creator;
+
+    private bool _isClosed;
+    public bool IsClosed {
+        get => _isClosed;
+        set => SetProperty(ref _isClosed, value);
+    }
 
     public bool CanEdit => IsCreator && !EditPollMode;
 
@@ -175,6 +190,11 @@ public class PollVotesViewModel : ViewModelCommon {
     public bool ShowGrid {
         get => _showGrid;
         set => SetProperty(ref _showGrid, value);
+    }
+
+    protected sealed override void OnRefreshData() {
+        Poll = Context.Polls.First(p => p.Id == Poll.Id);
+        IsClosed = Poll.IsClosed;
     }
 
     /* -------------------------- Add/Edit -------------------------- */
@@ -275,7 +295,7 @@ public class PollVotesViewModel : ViewModelCommon {
         get {
             bool b = true;
 
-            Poll.Votes.GroupBy(v => v.Choice).ToList()
+            Poll.Votes.GroupBy(v => v.User).ToList()
                 .ForEach(l => {
                     if (l.Count() > 1)
                         b = false;

@@ -19,14 +19,14 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Visibility="{c:Binding Poll.IsClosed}"
+        <Border Visibility="{c:Binding IsClosed}"
                 BorderBrush="Transparent" CornerRadius="10"
                 Background="#f5dede" HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="This poll has been closed!" FontWeight="Bold" FontSize="12"
                            VerticalAlignment="Center" Padding="5"/>
                 <Button Visibility="{c:Binding IsCreator}" Content="Reopen"
-                        Height="20"/>
+                        Height="20" Command="{Binding OpenPollCommand}"/>
             </StackPanel>
         </Border>
         <DockPanel Grid.Row="1">
