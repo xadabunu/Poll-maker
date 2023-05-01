@@ -16,7 +16,8 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
-        EditPollMode = Poll.Title == "New Poll";
+        _isNew = Poll.Title == App.NEW_POLL_LABEL;
+        EditPollMode = _isNew;
 
         var participants = poll.Participants.OrderBy(p => p.FullName);
 
@@ -41,7 +42,6 @@ public class PollVotesViewModel : ViewModelCommon {
 
         /* ------------------ Add/Edit part ------------------ */
 
-        _isNew = Poll.Title == "New Poll";
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
         NoChoice = Poll.Choices.Count == 0;
@@ -50,8 +50,10 @@ public class PollVotesViewModel : ViewModelCommon {
         ShowGrid = !EditPollMode && !NoChoice && !NoParticipant;
 
         CancelCommand = new RelayCommand(() => {
-            if (_isNew)
-                NotifyColleagues(App.Messages.MSG_LOGIN, CurrentUser);
+            if (_isNew) {
+                ClearErrors();
+                NotifyColleagues(App.Messages.MSG_NEW_POLL_CANCEL);
+            }
             EditPollMode = false;
             Participants = new ObservableCollection<User>(Poll.Participants);
             EditChoices = new ObservableCollection<Choice>(Poll.Choices);
@@ -88,7 +90,7 @@ public class PollVotesViewModel : ViewModelCommon {
             NoChoice = false;
             EditChoices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
             NewChoice = "";
-        }, ValidateChoice);
+        }, () => !NewChoice.IsNullOrEmpty());
 
         DeleteChoiceCommand = new RelayCommand<Choice>(choice => {
             EditChoices.Remove(choice);
@@ -226,7 +228,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private string _newChoice;
     public string NewChoice {
         get => _newChoice;
-        set => SetProperty(ref _newChoice, value, () => ValidateChoice());
+        set => SetProperty(ref _newChoice, value.Trim());
     }
 
     public bool EditPollMode {
@@ -247,25 +249,38 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Title required");
         else if (EditTitle.Length < 7)
             AddError(nameof(EditTitle), "Title length must be at least 7 char");
-        else if (EditTitle == "New Poll")
+        else if (EditTitle == App.NEW_POLL_LABEL)
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         return !HasErrors;
     }
 
-    private bool ValidateChoice() {
-        ClearErrors();
-
-        bool b = !NewChoice.IsNullOrEmpty() && NewChoice.Length > 2;
-        if (!NewChoice.IsNullOrEmpty() && NewChoice.Length < 3) {
-            AddError(nameof(NewChoice), "Choice must be >= 3 characters long");
-        }
-
-        return b;
-    }
+    // private bool ValidateChoice() {
+    //     ClearErrors();
+    //
+    //     bool b = !NewChoice.IsNullOrEmpty() && NewChoice.Length > 2;
+    //     if (!NewChoice.IsNullOrEmpty() && NewChoice.Length < 3) {
+    //         AddError(nameof(NewChoice), "Choice must be >= 3 characters long");
+    //     }
+    //
+    //     return b;
+    // }
 
     private void AddParticipantAction(User user) {
         NoParticipant = false;
         Participants.Add(user);
         Addables.Remove(user);
+    }
+
+    public bool CanBeSingle {
+        get {
+            bool b = true;
+
+            Poll.Votes.GroupBy(v => v.Choice).ToList()
+                .ForEach(l => {
+                    if (l.Count() > 1)
+                        b = false;
+                });
+            return b;
+        }
     }
 }

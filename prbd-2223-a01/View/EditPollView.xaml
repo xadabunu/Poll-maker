@@ -34,7 +34,8 @@
                      Text="{Binding EditTitle}" VerticalAlignment="Center"/>
             <Label Grid.Column="0" Grid.Row="1" Content="Type: "/>
             <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
-                      SelectedIndex="{Binding EditType}">
+                      SelectedIndex="{Binding EditType}"
+                      IsEnabled="{c:Binding CanBeSingle}">
                 <ComboBoxItem Content="Multiple"/>
                 <ComboBoxItem Content="Simple"/>
             </ComboBox>

@@ -12,9 +12,14 @@ public partial class MainView : WindowBase {
 
         Register(App.Messages.MSG_NEW_POLL,
             () => OpenPollVotesTab(new Poll {
-                Title = "New Poll",
+                Title = App.NEW_POLL_LABEL,
                 Creator = App.CurrentUser
             }));
+
+        Register(App.Messages.MSG_NEW_POLL_CANCEL,
+            () => {
+                tabControl.CloseByTag(App.NEW_POLL_LABEL);
+            });
     }
 
     private void OpenPollVotesTab(Poll poll) {

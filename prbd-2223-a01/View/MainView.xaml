@@ -13,9 +13,11 @@
         <vm:MainViewModel/>
     </Window.DataContext>
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Logout" Command="{Binding LogoutCommand}" Margin="5"/>
-            <Button Content="Reload" Command="{Binding ReloadCommand}" Margin="5"/>
+        <StackPanel Orientation="Horizontal" Background="LightGray">
+            <Button Content="Logout" Command="{Binding LogoutCommand}"
+                    Margin="5" BorderThickness="0" Background="LightGray"/>
+            <Button Content="Reload" Command="{Binding ReloadCommand}"
+                    Margin="5" BorderThickness="0" Background="LightGray"/>
         </StackPanel>
         <f:MyTabControl x:Name="tabControl" Margin="10" HasCloseButton="True">
             <TabItem x:Name="pollsTab" Header="Polls" Tag="Polls">
