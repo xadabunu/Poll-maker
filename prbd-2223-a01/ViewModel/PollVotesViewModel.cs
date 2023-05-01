@@ -37,10 +37,6 @@ public class PollVotesViewModel : ViewModelCommon {
             Comments.Remove(comment);
         });
 
-        Console.WriteLine("Edit =============>>>> " + EditPollMode);
-        Console.WriteLine("Choice =============>>>> " + NoChoice);
-        Console.WriteLine("Part =============>>>> " + NoParticipant);
-
         /* ------------------ Add/Edit part ------------------ */
 
         EditTitle = Poll.Title;
@@ -48,38 +44,69 @@ public class PollVotesViewModel : ViewModelCommon {
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
         ShowGrid = !EditPollMode && !NoChoice && !NoParticipant;
+
         CancelCommand = new RelayCommand(() => {
             EditPollMode = false;
             ShowGrid = !NoParticipant && !NoChoice;
         });
+
         Participants = new ObservableCollection<User>(Poll.Participants);
+
         Addables = new ObservableCollection<User>(
             Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
+
         DeleteParticipantCommand = new RelayCommand<User>(u => {
             Participants.Remove(u);
             NoParticipant = Participants.Count == 0;
             Addables.Add(u);
         });
+
         EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+
         EditChoiceCommand = new RelayCommand<Choice>(choice => {
+            _editedChoice = choice;
             NewChoice = choice.Label;
-            EditChoices.Remove(choice);
         });
+
+        AddChoiceCommand = new RelayCommand(() => {
+            EditChoices.Remove(_editedChoice);
+            NoChoice = false;
+            EditChoices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
+            NewChoice = "";
+        }, ValidateChoice);
+
         DeleteChoiceCommand = new RelayCommand<Choice>(choice => {
             EditChoices.Remove(choice);
             NoChoice = EditChoices.Count == 0;
         });
-        AddParticipantCommand = new RelayCommand<User>(user => {
-            NoParticipant = false;
-            Addables.Remove(user);
-            Participants.Add(user);
-        });
-        AddChoiceCommand = new RelayCommand(() => {
-            NoChoice = false;
-            Choice c = new Choice { PollId = Poll.Id, Label = NewChoice };
-            EditChoices.Add(c);
-            NewChoice = "";
-        }, ValidateChoice);
+
+        AddParticipantCommand = new RelayCommand<User>(AddParticipantAction);
+
+        AddMySelfCommand = new RelayCommand(() => {
+            AddParticipantAction(CurrentUser);
+        }, () => !Participants.Contains(CurrentUser));
+
+        AddEverybodyCommand = new RelayCommand(() =>
+            Addables.ToList().ForEach(u => AddParticipantAction(u)));
+
+        SaveCommand = new RelayCommand(() => {
+            Participants.Where(p => !Poll.Participants.Contains(p)).ToList()
+                .ForEach(u => Poll.Participants.Add(u));
+            Poll.Participants.Where(p => !Participants.Contains(p)).ToList()
+                .ForEach(u => Poll.Participants.Remove(u));
+            Poll.Choices.Clear();
+            EditChoices.ToList().ForEach(choice => Poll.Choices.Add(choice));
+            Poll.Title = EditTitle;
+            Poll.Type = EditType == 0 ? PollType.Multiple : PollType.Simple;
+            Poll.Status = IsChecked ? PollStatus.Closed : PollStatus.Open;
+
+            Context.SaveChanges();
+            /*
+             * NotifyColleagues(App.Messages.MSG_POLL_SAVED);
+             * pour refresh la page (titre, ...) ?
+             */
+            EditPollMode = false;
+        }, ValidateTitle);
     }
 
     public List<Choice> Choices => Poll.Choices.OrderBy(c => c.Label).ToList();
@@ -110,7 +137,7 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     private void PostAction() {
-        Comment c = new Comment {
+        var c = new Comment {
             AuthorId = CurrentUser.Id,
             PollId = Poll.Id,
             Text = Comment,
@@ -140,10 +167,20 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand DeleteChoiceCommand { get; }
     public ICommand AddChoiceCommand { get; }
     public ICommand AddParticipantCommand { get; }
+    public ICommand AddMySelfCommand { get; }
+    public ICommand AddEverybodyCommand { get; }
     public ObservableCollection<User> Participants { get; set; }
     public ObservableCollection<User> Addables { get; set; }
     public ObservableCollection<Choice> EditChoices { get; }
     private User _added;
+    private Choice _editedChoice;
+
+    private bool _isChecked;
+
+    public bool IsChecked {
+        get => _isChecked;
+        set => SetProperty(ref _isChecked, value);
+    }
 
     private bool _noChoice;
     public bool NoChoice {
@@ -182,10 +219,12 @@ public class PollVotesViewModel : ViewModelCommon {
     private string _editTitle;
     public string EditTitle {
         get => _editTitle;
-        set => SetProperty(ref _editTitle, value, () => Validate());
+        set => SetProperty(ref _editTitle, value, () => ValidateTitle());
     }
 
-    public override bool Validate() {
+    private  bool ValidateTitle() {
+        ClearErrors();
+
         if (EditTitle.IsNullOrEmpty())
             AddError(nameof(EditTitle), "Title required");
         else if (EditTitle.Length < 7)
@@ -194,11 +233,19 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     private bool ValidateChoice() {
+        ClearErrors();
+
         bool b = !NewChoice.IsNullOrEmpty() && NewChoice.Length > 2;
         if (!NewChoice.IsNullOrEmpty() && NewChoice.Length < 3) {
-            AddError(nameof(NewChoice), "Label of choice must be >= 3 characters long");
+            AddError(nameof(NewChoice), "Choice must be >= 3 characters long");
         }
 
         return b;
+    }
+
+    private void AddParticipantAction(User user) {
+        NoParticipant = false;
+        Participants.Add(user);
+        Addables.Remove(user);
     }
 }
