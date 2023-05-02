@@ -55,7 +55,22 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListView>
-        <Button Content="New Poll" VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                Margin="10" Command="{Binding NewPollCommand}"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="New Poll" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                    Margin="10" Command="{Binding NewPollCommand}"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <Border Width="35" Height="10" Background="{Binding UnansweredColor}"/>
+                <Label Content="Unanswered" Margin="0 0 10 0"/>
+                <Border Width="35" Height="10" Background="{Binding AnsweredColor}"/>
+                <Label Content="Answered" Margin="0 0 10 0"/>
+                <Border Width="35" Height="10" Background="{Binding ClosedColor}"/>
+                <Label Content="Closed"/>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </f:UserControlBase>

@@ -15,6 +15,11 @@ public enum PollStatus {
 }
 
 public class Poll : EntityBase<MyPollContext> {
+
+    public static readonly string ClosedColor = "#FFE6DC";
+    public static readonly string UnansweredColor = "#D3D3D3";
+    public static readonly string AnsweredColor = "#C4E0C4";
+
     public int Id { get; set; }
 
     [Required]
@@ -66,7 +71,7 @@ public class Poll : EntityBase<MyPollContext> {
     }
 
     public string BackgroundColor {
-        get => Status == PollStatus.Closed ? "#FFE6DC" : !HasVoted() ? "#D3D3D3" : "#C4E0C4";
+        get => Status == PollStatus.Closed ? ClosedColor : !HasVoted() ? UnansweredColor : AnsweredColor;
     }
 
     public Poll() {
