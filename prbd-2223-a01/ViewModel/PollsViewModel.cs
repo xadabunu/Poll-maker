@@ -49,4 +49,8 @@ public class PollsViewModel : ViewModelCommon {
             select p;
         Polls = new ObservableCollection<Poll>(query);
     }
+
+    public string UnansweredColor => Poll.UnansweredColor;
+    public string AnsweredColor => Poll.AnsweredColor;
+    public string ClosedColor => Poll.ClosedColor;
 }
