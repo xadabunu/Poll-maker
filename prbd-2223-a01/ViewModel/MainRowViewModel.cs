@@ -19,10 +19,12 @@ public class MainRowViewModel : ViewModelCommon {
 
     private List<Choice> _choices;
     public List<Choice> Choices => _choices.OrderBy(c => c.Label).ToList();
+    private bool _isClosed;
 
-    public MainRowViewModel(PollVotesViewModel pollVotesViewModel, User participant, List<Choice> choices) {
+    public MainRowViewModel(PollVotesViewModel pollVotesViewModel, Poll poll, User participant) {
 
-        _choices = choices;
+        _choices = poll.Choices.ToList();
+        _isClosed = poll.IsClosed;
         Participant = participant;
         _pollVotesViewModel = pollVotesViewModel;
         RefreshChoices();
@@ -39,12 +41,12 @@ public class MainRowViewModel : ViewModelCommon {
         set => SetProperty(ref _editMode, value, EditModeChanged);
     }
 
-    public bool Editable => Participant == App.CurrentUser && !_editMode;
+    public bool Editable => Participant == App.CurrentUser && !_editMode && !_isClosed;
 
     private void EditModeChanged() {
         if (Participant == App.CurrentUser)
             _cellsVm.ForEach(vm => vm.EditMode = EditMode);
-        _pollVotesViewModel.AskEditMode(EditMode);
+        _pollVotesViewModel.AskEditMode();
     }
 
     private List<MainCellViewModel> _cellsVm = new();
@@ -85,5 +87,11 @@ public class MainRowViewModel : ViewModelCommon {
         // Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
         Context.SaveChanges();
         RefreshChoices();
+    }
+
+    protected override void OnRefreshData() {
+        var poll = _choices.First().Poll;
+        if (poll != null)
+            _isClosed = poll.IsClosed;
     }
 }

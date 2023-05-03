@@ -17,7 +17,7 @@
 
         <TextBlock Text="Comments" FontWeight="Bold" FontSize="20" Margin="5"/>
 
-        <TextBlock Margin="5 0 5 5" Visibility="{c:Binding !WritingMode}">
+        <TextBlock Margin="5 0 5 5" Visibility="{c:Binding CanComment}">
             <Hyperlink  Command="{Binding AddCommentCommand}">
                 <Run Text="Add a comment"/>
             </Hyperlink>

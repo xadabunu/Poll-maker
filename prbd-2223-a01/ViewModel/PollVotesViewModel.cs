@@ -23,15 +23,19 @@ public class PollVotesViewModel : ViewModelCommon {
         _isNew = Poll.Title == App.NEW_POLL_LABEL;
         EditPollMode = _isNew;
         IsClosed = Poll.IsClosed;
+        CanComment = !IsClosed;
 
         var participants = poll.Participants.OrderBy(p => p.FullName);
 
-        _participantsVM = participants.Select(p => new MainRowViewModel(this, p, poll.Choices.ToList())).ToList();
+        _participantsVM = participants.Select(p => new MainRowViewModel(this, Poll, p)).ToList();
         EditPollCommand = new RelayCommand(() => {
             EditPollMode = true;
             ShowGrid = false;
         });
-        AddCommentCommand = new RelayCommand(() => WritingMode = true);
+        AddCommentCommand = new RelayCommand(() => {
+            CanComment = false;
+            WritingMode = true;
+        });
         PostCommand = new RelayCommand(() => PostAction(),
             () => !Comment.IsNullOrEmpty());
 
@@ -62,7 +66,7 @@ public class PollVotesViewModel : ViewModelCommon {
             }
         });
 
-        /* ------------------ Add/Edit part ------------------ */
+        /* ------------------ Constr Add/Edit part ------------------ */
 
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
@@ -138,6 +142,7 @@ public class PollVotesViewModel : ViewModelCommon {
                 Context.Polls.Add(Poll);
             Context.SaveChanges();
             EditPollMode = false;
+            ShowGrid = !NoParticipant && !NoChoice;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         }, () => ValidateTitle() && HasChanges);
     }
@@ -147,9 +152,13 @@ public class PollVotesViewModel : ViewModelCommon {
     public Poll Poll { get; set; }
 
     private List<MainRowViewModel> _participantsVM;
-    public List<MainRowViewModel> ParticipantsVM => _participantsVM;
 
-    public void AskEditMode(bool editMode) {
+    public List<MainRowViewModel> ParticipantsVM {
+        get => _participantsVM;
+        set => SetProperty(ref _participantsVM, value);
+    }
+
+    public void AskEditMode() {
         ParticipantsVM.ForEach(vm => vm.Changes());
     }
 
@@ -169,6 +178,12 @@ public class PollVotesViewModel : ViewModelCommon {
         set => SetProperty(ref _writingMode, value);
     }
 
+    private bool _canComment;
+    public bool CanComment {
+        get => _canComment;
+        set => SetProperty(ref _canComment, value);
+    }
+
     private string _comment;
     public string Comment {
         get => _comment;
@@ -186,6 +201,7 @@ public class PollVotesViewModel : ViewModelCommon {
         Context.Comments.Add(c);
         Context.SaveChanges();
         WritingMode = false;
+        CanComment = !IsClosed;
         Comment = "";
     }
 
@@ -198,24 +214,37 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     protected sealed override void OnRefreshData() {
+        if (_isNew) return;
+
+        //Context.ChangeTracker.Clear(); -> supprime tous les votes de la db ?
+
         Poll = Context.Polls.First(p => p.Id == Poll.Id);
         IsClosed = Poll.IsClosed;
+        CanComment = !IsClosed;
         Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
 
-        /* -------------------------- Add/Edit -------------------------- */
+        /* -------------------------- Refresh Add/Edit -------------------------- */
 
-        Participants = new ObservableCollection<User>(Poll.Participants);
+        Participants = new ObservableCollection<User>(Poll.Participants.OrderBy(p => p.FullName));
+
+        ParticipantsVM = Participants.ToList()
+            .Select(p => new MainRowViewModel(this, Poll, p)).ToList();
+
         Addables = new ObservableCollection<User>(
             Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
-        EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+        EditChoices = new ObservableCollection<Choice>(Poll.Choices.OrderBy(ch => ch.Label));
+
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
+
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
         IsChecked = Poll.Status == PollStatus.Closed;
+
+        AskEditMode();
     }
 
-    /* -------------------------- Add/Edit -------------------------- */
+    /* -------------------------- Class Add/Edit -------------------------- */
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
@@ -226,9 +255,25 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand AddParticipantCommand { get; }
     public ICommand AddMySelfCommand { get; }
     public ICommand AddEverybodyCommand { get; }
-    public ObservableCollection<User> Participants { get; private set; }
-    public ObservableCollection<User> Addables { get; set; }
-    public ObservableCollection<Choice> EditChoices { get; private set; }
+
+    private ObservableCollection<User> _participants;
+    public ObservableCollection<User> Participants {
+        get => _participants;
+        private set => SetProperty(ref _participants, value);
+    }
+
+    private ObservableCollection<User> _addables;
+    public ObservableCollection<User> Addables {
+        get => _addables;
+        private set => SetProperty(ref _addables, value);
+    }
+
+    private ObservableCollection<Choice> _editChoices;
+    public ObservableCollection<Choice> EditChoices {
+        get => _editChoices;
+        private set => SetProperty(ref _editChoices, value);
+    }
+
     private User _added;
     private Choice _editedChoice;
 
