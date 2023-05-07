@@ -81,8 +81,8 @@ public class PollVotesViewModel : ViewModelCommon {
                 NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
             }
             EditPollMode = false;
-            Participants = new ObservableCollection<User>(Poll.Participants);
-            EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+            Participants = new ObservableCollection<User>(Poll.Participants.OrderBy(p => p.FullName));
+            EditChoices = new ObservableCollection<Choice>(Poll.Choices.OrderBy(c => c.Label));
             Addables = new ObservableCollection<User>(
                 Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
 
@@ -94,7 +94,7 @@ public class PollVotesViewModel : ViewModelCommon {
             //clearChanges ?
         });
 
-        Participants = new ObservableCollection<User>(Poll.Participants);
+        Participants = new ObservableCollection<User>(Poll.Participants.OrderBy(p => p.FullName));
 
         Addables = new ObservableCollection<User>(
             Context.Users.Where(u => !Participants.Contains(u)).OrderBy(u => u.FullName));
@@ -104,9 +104,10 @@ public class PollVotesViewModel : ViewModelCommon {
             Poll.Participants.Remove(u);
             NoParticipant = Participants.Count == 0;
             Addables.Add(u);
+            Addables = new ObservableCollection<User>(Addables.OrderBy(a => a.FullName));
         });
 
-        EditChoices = new ObservableCollection<Choice>(Poll.Choices);
+        EditChoices = new ObservableCollection<Choice>(Poll.Choices.OrderBy(c => c.Label));
 
         EditChoiceCommand = new RelayCommand<Choice>(choice => {
             _editedChoice = choice;
@@ -118,6 +119,7 @@ public class PollVotesViewModel : ViewModelCommon {
             NoChoice = false;
             var c = new Choice { PollId = Poll.Id, Label = NewChoice };
             EditChoices.Add(c);
+            EditChoices = new ObservableCollection<Choice>(EditChoices.OrderBy(ch => ch.Label));
             Poll.Choices.Add(c);
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
@@ -362,6 +364,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private void AddParticipantAction(User user) {
         NoParticipant = false;
         Participants.Add(user);
+        Participants = new ObservableCollection<User>(Participants.OrderBy(p => p.FullName));
         Poll.Participants.Add(user);
         Addables.Remove(user);
     }
