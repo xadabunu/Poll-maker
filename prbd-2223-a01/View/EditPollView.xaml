@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:MyPoll.View"
              xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
+             xmlns:m="clr-namespace:MyPoll.Model"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d"
@@ -70,6 +71,15 @@
                 <ItemsControl ItemsSource="{Binding Participants}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
+                            <DataTemplate.Resources>
+                                <ObjectDataProvider x:Key="Fun1"
+                                                    ObjectInstance="{x:Type vm:PollVotesViewModel}"
+                                                    MethodName="GetUserVotesNb">
+                                    <ObjectDataProvider.MethodParameters>
+                                        <x:Type Type="m:User"/>
+                                    </ObjectDataProvider.MethodParameters>
+                                </ObjectDataProvider>
+                            </DataTemplate.Resources>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -77,7 +87,10 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock >
                                     <Run Text="{Binding FullName}"/>
-                                    <Run Text="(xx)"/>
+                                    <Run Text=" ("/>
+                                    <Run Text="{Binding Source={StaticResource Fun1},
+                                    Path=MethodParameters[0], BindsDirectlyToSource=True}"/>
+                                    <Run Text=")"/>
                                 </TextBlock>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"
                                         fap:FontAwesome.Icon="Regular_TrashCan" Foreground="Red"
@@ -120,6 +133,15 @@
                 <ItemsControl ItemsSource="{Binding EditChoices}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
+                            <DataTemplate.Resources>
+                                <ObjectDataProvider x:Key="Fun2"
+                                                    ObjectInstance="{x:Type vm:PollVotesViewModel}"
+                                                    MethodName="GetChoiceVotesNb">
+                                    <ObjectDataProvider.MethodParameters>
+                                        <x:Type Type="m:Choice"/>
+                                    </ObjectDataProvider.MethodParameters>
+                                </ObjectDataProvider>
+                            </DataTemplate.Resources>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -128,7 +150,10 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock TextWrapping="WrapWithOverflow" Margin="5">
                                     <Run Text="{Binding Label}"/>
-                                    <Run Text=" (xx)"/>
+                                    <Run Text=" ("/>
+                                    <Run Text="{Binding Source={StaticResource Fun2},
+                                    Path=MethodParameters[0], BindsDirectlyToSource=True}"/>
+                                    <Run Text=")"/>
                                 </TextBlock>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"
                                         fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black"

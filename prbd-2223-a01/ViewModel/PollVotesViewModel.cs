@@ -366,16 +366,9 @@ public class PollVotesViewModel : ViewModelCommon {
         Addables.Remove(user);
     }
 
-    public bool CanBeSingle {
-        get {
-            bool b = true;
+    public int GetUserVotesNb(User user) => Poll.Votes.Where(v => v.User == user).Count();
 
-            Poll.Votes.GroupBy(v => v.User).ToList()
-                .ForEach(l => {
-                    if (l.Count() > 1)
-                        b = false;
-                });
-            return b;
-        }
-    }
+    public int GetChoiceVotesNb(Choice choice) => Poll.Votes.Where(v => v.Choice == choice).Count();
+
+    public bool CanBeSingle => !Poll.Votes.GroupBy(v => v.User).Any(elem => elem.Count() > 1);
 }
