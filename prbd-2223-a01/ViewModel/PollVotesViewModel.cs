@@ -162,7 +162,7 @@ public class PollVotesViewModel : ViewModelCommon {
         ParticipantsVM.ForEach(vm => vm.Changes());
     }
 
-    public bool IsCreator => CurrentUser == Poll.Creator;
+    public bool IsCreator => IsAdmin || CurrentUser == Poll.Creator;
 
     private bool _isClosed;
     public bool IsClosed {

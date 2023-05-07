@@ -33,7 +33,9 @@ public class PollsViewModel : ViewModelCommon {
     }
 
     protected sealed override void OnRefreshData() {
-        Polls = new ObservableCollection<Poll>(Context.Polls
+        Polls = new ObservableCollection<Poll>(
+            IsAdmin ? Context.Polls.OrderBy(p => p.Title) :
+            Context.Polls
             .Where(p => p.Participants.Any(part => part.Id == CurrentUser.Id))
             .Union(Context.Polls.Where(p => p.Creator == CurrentUser))
             .OrderBy(p => p.Title));

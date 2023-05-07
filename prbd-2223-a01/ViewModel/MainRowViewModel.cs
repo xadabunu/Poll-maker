@@ -37,14 +37,14 @@ public class MainRowViewModel : ViewModelCommon {
 
     private bool _editMode;
     public bool EditMode {
-        get => App.CurrentUser == Participant && _editMode;
+        get => (IsAdmin || App.CurrentUser == Participant) && _editMode;
         set => SetProperty(ref _editMode, value, EditModeChanged);
     }
 
-    public bool Editable => Participant == App.CurrentUser && !_editMode && !_isClosed;
+    public bool Editable => (IsAdmin || Participant == App.CurrentUser) && !_editMode && !_isClosed;
 
     private void EditModeChanged() {
-        if (Participant == App.CurrentUser)
+        if (IsAdmin || Participant == App.CurrentUser)
             _cellsVm.ForEach(vm => vm.EditMode = EditMode);
         _pollVotesViewModel.AskEditMode();
     }
