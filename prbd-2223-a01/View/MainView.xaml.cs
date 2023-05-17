@@ -12,7 +12,7 @@ public partial class MainView : WindowBase {
 
         Register(App.Messages.MSG_NEW_POLL,
             () => OpenPollVotesTab(new Poll {
-                Title = App.NEW_POLL_LABEL,
+                Title = Poll.NEW_POLL_LABEL,
                 Creator = App.CurrentUser
             }));
 

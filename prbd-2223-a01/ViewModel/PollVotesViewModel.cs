@@ -20,7 +20,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
     public PollVotesViewModel(Poll poll) {
         Poll = poll;
-        _isNew = Poll.Title == App.NEW_POLL_LABEL;
+        _isNew = Poll.Title == Poll.NEW_POLL_LABEL;
         EditPollMode = _isNew;
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
@@ -78,7 +78,7 @@ public class PollVotesViewModel : ViewModelCommon {
         CancelCommand = new RelayCommand(() => {
             if (_isNew) {
                 ClearErrors();
-                Poll.Title = App.NEW_POLL_LABEL;
+                Poll.Title = Poll.NEW_POLL_LABEL;
                 NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
             }
             EditPollMode = false;
@@ -341,7 +341,7 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Title required");
         else if (EditTitle.Length < 7)
             AddError(nameof(EditTitle), "Title length must be at least 7 char");
-        else if (EditTitle == App.NEW_POLL_LABEL)
+        else if (EditTitle == Poll.NEW_POLL_LABEL)
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         else {
             Poll.Title = EditTitle;

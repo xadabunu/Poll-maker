@@ -71,17 +71,19 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Save() {
-        CellsVM.ForEach(vm => Context.Remove(vm.Vote));
-        CellsVM.Where(vm => vm.IsVoted).ToList()
-            .ForEach(vm => Context.Votes.Add(vm.Vote));
+        CellsVM.ForEach(vm => {
+            if (vm.Vote.Value == VoteValue.ToRemove)
+                Context.Votes.Remove(vm.Vote);
+        });
+        CellsVM.ForEach(vm => {
+            if (vm.IsVoted && !Context.Votes.Contains(vm.Vote)) {
+                Context.Votes.Add(vm.Vote);
+            }
+        });
 
-        Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Context.SaveChanges();
         EditMode = false;
-        Console.WriteLine("=============================================");
-
         RefreshChoices();
-        Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
     }
 
@@ -93,15 +95,13 @@ public class MainRowViewModel : ViewModelCommon {
 
     private void Delete() {
         CellsVM.ForEach(vm => {
+            if (vm.Vote.Value != VoteValue.None)
                 Context.Votes.Remove(vm.Vote);
         });
+        // Console.WriteLine(Context.ChangeTracker.DebugView.ShortView);
 
-        // Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
-        Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Context.SaveChanges();
-        Console.WriteLine("=========================================================");
         RefreshChoices();
-        Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
     }
 

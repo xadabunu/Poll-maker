@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using PRBD_Framework;
 
 namespace MyPoll.Model;
@@ -9,7 +7,8 @@ public enum VoteValue {
     No = -2,
     Maybe = 1,
     Yes = 2,
-    None = 0
+    None = 0,
+    ToRemove = -5
 }
 
 public class Vote : EntityBase<MyPollContext> {

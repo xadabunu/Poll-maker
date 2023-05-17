@@ -19,6 +19,7 @@ public class Poll : EntityBase<MyPollContext> {
     public static readonly string ClosedColor = "#FFE6DC";
     public static readonly string UnansweredColor = "#D3D3D3";
     public static readonly string AnsweredColor = "#C4E0C4";
+    public static readonly string NEW_POLL_LABEL = "New Poll";
 
     public int Id { get; set; }
 

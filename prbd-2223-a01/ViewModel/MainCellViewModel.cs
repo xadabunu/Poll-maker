@@ -25,12 +25,11 @@ public class MainCellViewModel : ViewModelCommon {
                 "No" => VoteValue.No,
                 _ => VoteValue.None
             };
-            Vote.Value = Vote.Value == val ? VoteValue.None : val;
-            if (choice.Poll.IsSimple && Vote.Value != VoteValue.None) {
+            Vote.Value = Vote.Value == val ? VoteValue.ToRemove : val;
+            if (choice.Poll.IsSimple && Vote.Value != VoteValue.ToRemove) {
                 mainRowViewModel.ClearVotes(this);
             }
-            Console.WriteLine(Vote.Value);
-            IsVoted = Vote.Value != VoteValue.None;
+            IsVoted = Vote.Value != VoteValue.None && Vote.Value != VoteValue.ToRemove;
             RaiseProperties();
         });
     }
@@ -62,7 +61,8 @@ public class MainCellViewModel : ViewModelCommon {
     }
 
     public void ClearVote() {
-        Vote.Value = VoteValue.None;
+        if (Vote.Value != VoteValue.None)
+            Vote.Value = VoteValue.ToRemove;
         RaiseProperties();
     }
 
