@@ -10,7 +10,7 @@ public class MainCellViewModel : ViewModelCommon {
 
     public ICommand ChangeVoteCommand { get; set; }
 
-    public MainCellViewModel(User participant, Choice choice) {
+    public MainCellViewModel(User participant, Choice choice, MainRowViewModel mainRowViewModel) {
         IsVoted = Context.Votes.Any(v => v.User == participant && v.Choice == choice);
         Vote = Context.Votes.FirstOrDefault(v => v.User == participant && v.Choice == choice) ?? new Vote {
             Choice = choice,
@@ -18,20 +18,24 @@ public class MainCellViewModel : ViewModelCommon {
             Value = VoteValue.None
         };
 
-        ChangeVoteCommand = new RelayCommand<string>((s) => ChangeVote(s));
+        ChangeVoteCommand = new RelayCommand<string>(s => {
+            VoteValue val = s switch {
+                "Yes" => VoteValue.Yes,
+                "Maybe" => VoteValue.Maybe,
+                "No" => VoteValue.No,
+                _ => VoteValue.None
+            };
+            Vote.Value = Vote.Value == val ? VoteValue.None : val;
+            if (choice.Poll.IsSimple && Vote.Value != VoteValue.None) {
+                mainRowViewModel.ClearVotes(this);
+            }
+            Console.WriteLine(Vote.Value);
+            IsVoted = Vote.Value != VoteValue.None;
+            RaiseProperties();
+        });
     }
 
-    private void ChangeVote(string str) {
-        VoteValue val = str switch {
-            "Yes" => VoteValue.Yes,
-            "Maybe" => VoteValue.Maybe,
-            "No" => VoteValue.No,
-            _ => VoteValue.None
-        };
-
-        Vote.Value = Vote.Value == val ? VoteValue.None : val;
-        IsVoted = Vote.Value != VoteValue.None;
-
+    private void RaiseProperties() {
         RaisePropertyChanged(nameof(VotedYes));
         RaisePropertyChanged(nameof(VotedNo));
         RaisePropertyChanged(nameof(VotedMaybe));
@@ -55,6 +59,11 @@ public class MainCellViewModel : ViewModelCommon {
     public bool IsVoted {
         get => _isVoted;
         set => SetProperty(ref _isVoted, value);
+    }
+
+    public void ClearVote() {
+        Vote.Value = VoteValue.None;
+        RaiseProperties();
     }
 
     public EFontAwesomeIcon VotedIcon {

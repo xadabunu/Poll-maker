@@ -56,6 +56,7 @@ public class Poll : EntityBase<MyPollContext> {
     }
 
     public bool IsClosed => Status == PollStatus.Closed;
+    public bool IsSimple => Type == PollType.Simple;
 
     [NotMapped]
     public ICollection<Choice> BestChoices {

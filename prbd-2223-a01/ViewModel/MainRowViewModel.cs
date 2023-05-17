@@ -59,34 +59,50 @@ public class MainRowViewModel : ViewModelCommon {
         RaisePropertyChanged(nameof(Editable));
     }
 
+    public void ClearVotes(MainCellViewModel cellvm) {
+        CellsVM.Where(other => other != cellvm).ToList()
+            .ForEach(vm => vm.ClearVote());
+    }
+
     private void RefreshChoices() {
         CellsVM = Choices
-            .Select(c => new MainCellViewModel(Participant, c))
+            .Select(c => new MainCellViewModel(Participant, c, this))
             .ToList();
     }
 
     private void Save() {
-        Participant.Votes = CellsVM.Where(vm => vm.IsVoted).Select(vm => vm.Vote).ToList();
+        CellsVM.ForEach(vm => Context.Remove(vm.Vote));
+        CellsVM.Where(vm => vm.IsVoted).ToList()
+            .ForEach(vm => Context.Votes.Add(vm.Vote));
+
+        Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Context.SaveChanges();
         EditMode = false;
+        Console.WriteLine("=============================================");
+
         RefreshChoices();
+        Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
     }
 
     private void Cancel() {
+        Context.ChangeTracker.Clear();
         RefreshChoices();
         EditMode = false;
     }
 
     private void Delete() {
-        // CellsVM.ToList().ForEach(vm => vm.Vote.Value = VoteValue.None);
-        CellsVM.ToList().ForEach(vm => {
-            if (vm.Vote.Value != VoteValue.None)
+        CellsVM.ForEach(vm => {
                 Context.Votes.Remove(vm.Vote);
         });
 
         // Context.Votes.Where(v => v.Value == VoteValue.None).ExecuteDelete();
+        Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Context.SaveChanges();
+        Console.WriteLine("=========================================================");
         RefreshChoices();
+        Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
     }
 
     protected override void OnRefreshData() {

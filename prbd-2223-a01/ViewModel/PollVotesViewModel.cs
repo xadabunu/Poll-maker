@@ -78,6 +78,7 @@ public class PollVotesViewModel : ViewModelCommon {
         CancelCommand = new RelayCommand(() => {
             if (_isNew) {
                 ClearErrors();
+                Poll.Title = App.NEW_POLL_LABEL;
                 NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
             }
             EditPollMode = false;
