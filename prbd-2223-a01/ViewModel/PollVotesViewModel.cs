@@ -365,9 +365,9 @@ public class PollVotesViewModel : ViewModelCommon {
 
     private void AddParticipantAction(User user) {
         NoParticipant = false;
-        Participants.Add(new {User = user, Nb = GetUserVotesNb(user)});
-        Participants = GetParticipants();
+        // Participants.Add(new {User = user, Nb = GetUserVotesNb(user)});
         Poll.Participants.Add(user);
+        Participants = GetParticipants();
         Addables.Remove(user);
     }
 

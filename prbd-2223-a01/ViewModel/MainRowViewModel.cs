@@ -19,9 +19,12 @@ public class MainRowViewModel : ViewModelCommon {
 
     private List<Choice> _choices;
     public List<Choice> Choices => _choices.OrderBy(c => c.Label).ToList();
+    private Poll _poll;
     private bool _isClosed;
 
     public MainRowViewModel(PollVotesViewModel pollVotesViewModel, Poll poll, User participant) {
+
+        _poll = poll;
 
         _choices = poll.Choices.ToList();
         _isClosed = poll.IsClosed;
@@ -106,8 +109,6 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     protected override void OnRefreshData() {
-        var poll = _choices.First().Poll;
-        if (poll != null)
-            _isClosed = poll.IsClosed;
+        _isClosed = Context.Polls.Find(_poll.Id).IsClosed;
     }
 }
