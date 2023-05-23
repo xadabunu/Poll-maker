@@ -32,7 +32,7 @@
             </Grid.RowDefinitions>
             <Label Content="Poll Name: "/>
             <TextBox Grid.Row="0" Grid.Column="1"
-                     Text="{Binding EditTitle}" VerticalAlignment="Center"/>
+                     Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
             <Label Grid.Column="0" Grid.Row="1" Content="Type: "/>
             <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"
                       SelectedIndex="{Binding EditType}"
@@ -71,25 +71,15 @@
                 <ItemsControl ItemsSource="{Binding Participants}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <DataTemplate.Resources>
-                                <ObjectDataProvider x:Key="Fun1"
-                                                    ObjectInstance="{x:Type vm:PollVotesViewModel}"
-                                                    MethodName="GetUserVotesNb">
-                                    <ObjectDataProvider.MethodParameters>
-                                        <x:Type Type="m:User"/>
-                                    </ObjectDataProvider.MethodParameters>
-                                </ObjectDataProvider>
-                            </DataTemplate.Resources>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock >
-                                    <Run Text="{Binding FullName}"/>
+                                    <Run Text="{Binding User.FullName, Mode=OneWay}"/>
                                     <Run Text=" ("/>
-                                    <Run Text="{Binding Source={StaticResource Fun1},
-                                    Path=MethodParameters[0], BindsDirectlyToSource=True}"/>
+                                    <Run Text="{Binding Nb, Mode=OneWay}"/>
                                     <Run Text=")"/>
                                 </TextBlock>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"
@@ -133,15 +123,6 @@
                 <ItemsControl ItemsSource="{Binding EditChoices}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <DataTemplate.Resources>
-                                <ObjectDataProvider x:Key="Fun2"
-                                                    ObjectInstance="{x:Type vm:PollVotesViewModel}"
-                                                    MethodName="GetChoiceVotesNb">
-                                    <ObjectDataProvider.MethodParameters>
-                                        <x:Type Type="m:Choice"/>
-                                    </ObjectDataProvider.MethodParameters>
-                                </ObjectDataProvider>
-                            </DataTemplate.Resources>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -149,10 +130,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock TextWrapping="WrapWithOverflow" Margin="5">
-                                    <Run Text="{Binding Label}"/>
+                                    <Run Text="{Binding Choice.Label, Mode=OneWay}"/>
                                     <Run Text=" ("/>
-                                    <Run Text="{Binding Source={StaticResource Fun2},
-                                    Path=MethodParameters[0], BindsDirectlyToSource=True}"/>
+                                    <Run Text="{Binding Nb, Mode=OneWay}"/>
                                     <Run Text=")"/>
                                 </TextBlock>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"

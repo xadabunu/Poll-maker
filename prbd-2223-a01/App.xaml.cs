@@ -7,8 +7,6 @@ namespace MyPoll;
 
 public partial class App : ApplicationBase<User, MyPollContext> {
 
-    public static string NEW_POLL_LABEL = "New Poll";
-
     public enum Messages {
         MSG_SIGNUP,
         MSG_LOGIN,
