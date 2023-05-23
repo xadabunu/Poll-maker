@@ -155,7 +155,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding NewChoice}"
+                <TextBox Text="{Binding NewChoice, UpdateSourceTrigger=PropertyChanged}"
                          VerticalAlignment="Center" Margin="5"/>
                 <Button Grid.Column="1" Content="Add" VerticalAlignment="Center"
                         Command="{Binding AddChoiceCommand}"/>

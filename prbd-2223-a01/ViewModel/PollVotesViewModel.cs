@@ -39,6 +39,8 @@ public class PollVotesViewModel : ViewModelCommon {
         PostCommand = new RelayCommand(() => PostAction(),
             () => !Comment.IsNullOrEmpty());
 
+        Choices = Poll.Choices.OrderBy(c => c.Label).ToList();
+
         Comments = new ObservableCollection<Comment>(Context.Comments
             .Where(c => c.Poll == poll)
             .OrderByDescending(c => c.CreationDate));
@@ -123,24 +125,36 @@ public class PollVotesViewModel : ViewModelCommon {
 
         EditChoices = GetEditChoices();
 
-        EditChoiceCommand = new RelayCommand<Choice>(choice => {
-            _editedChoice = choice;
-            NewChoice = choice.Label;
+        EditChoiceCommand = new RelayCommand<dynamic>(obj => {
+            _editedChoice = obj;
+            NewChoice = obj.Choice.Label;
         });
 
         AddChoiceCommand = new RelayCommand(() => {
-            EditChoices.Remove(_editedChoice);
-            NoChoice = false;
-            var c = new Choice { PollId = Poll.Id, Label = NewChoice };
-            EditChoices.Add(c);
+            if (_editedChoice != null) {
+                EditChoices.Remove(_editedChoice);
+                Poll.Choices.First(ch => ch.Id == _editedChoice.Choice.Id).Label = NewChoice;
+                _editedChoice = null;
+            } else {
+                NoChoice = false;
+                Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
+            }
             EditChoices = GetEditChoices();
-            Poll.Choices.Add(c);
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
 
-        DeleteChoiceCommand = new RelayCommand<Choice>(choice => {
-            EditChoices.Remove(choice);
-            Poll.Choices.Remove(choice);
+        DeleteChoiceCommand = new RelayCommand<dynamic>(obj => {
+            if (obj.Nb > 0) {
+                MessageBoxResult result = MessageBox
+                    .Show("This choice has already " + obj.Nb + " vote(s).\n" +
+                          "If you proceed ans save the poll, the corresponding vote(s) will be deleted.\nDo you confirm?",
+                        "Confirmation", MessageBoxButton.YesNo);
+                if (result != MessageBoxResult.Yes) {
+                    return;
+                }
+            }
+            EditChoices.Remove(obj);
+            Poll.Choices.Remove(obj.Choice);
             NoChoice = EditChoices.Count == 0;
         });
 
@@ -163,7 +177,11 @@ public class PollVotesViewModel : ViewModelCommon {
         }, () => ValidateTitle() && HasChanges);
     }
 
-    public List<Choice> Choices => Poll.Choices.OrderBy(c => c.Label).ToList();
+    private List<Choice> _choices;
+    public List<Choice> Choices {
+        get => _choices;
+        set => SetProperty(ref _choices, value);
+    }
 
     public Poll Poll { get; set; }
 
@@ -238,6 +256,7 @@ public class PollVotesViewModel : ViewModelCommon {
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
         Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
+        Choices = Poll.Choices.OrderBy(c => c.Label).ToList();
 
         /* -------------------------- Refresh Add/Edit -------------------------- */
 
@@ -290,7 +309,7 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     private User _added;
-    private Choice _editedChoice;
+    private dynamic _editedChoice;
 
     private bool _isChecked;
     private bool _isNew;
@@ -365,7 +384,6 @@ public class PollVotesViewModel : ViewModelCommon {
 
     private void AddParticipantAction(User user) {
         NoParticipant = false;
-        // Participants.Add(new {User = user, Nb = GetUserVotesNb(user)});
         Poll.Participants.Add(user);
         Participants = GetParticipants();
         Addables.Remove(user);
