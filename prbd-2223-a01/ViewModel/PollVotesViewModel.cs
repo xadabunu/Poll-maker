@@ -72,29 +72,21 @@ public class PollVotesViewModel : ViewModelCommon {
 
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
-        NoChoice = Poll.Choices.Count == 0; // erreur quand ouvre temporary
+        NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
         IsChecked = Poll.Status == PollStatus.Closed;
         ShowGrid = !EditPollMode && !NoChoice && !NoParticipant;
 
         CancelCommand = new RelayCommand(() => {
+            ClearErrors();
             if (_isNew) {
-                ClearErrors();
                 Poll.Title = Poll.NEW_POLL_LABEL;
                 NotifyColleagues(App.Messages.MSG_POLL_DELETED, Poll);
             }
-            EditPollMode = false;
-            Participants = GetParticipants();
-            EditChoices = GetEditChoices();
-            Addables = GetAddables();
 
-            IsChecked = Poll.Status == PollStatus.Closed;
-            EditType = Poll.Type == PollType.Multiple ? 0 : 1;
-            _editedChoice = null;
-            NewChoice = "";
-            ShowGrid = !NoParticipant && !NoChoice;
-            //clearChanges ?
-            Context.ChangeTracker.Clear();
+            App.ClearContext();
+            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
+            EditPollMode = false;
         });
 
         Participants = GetParticipants();
@@ -102,18 +94,17 @@ public class PollVotesViewModel : ViewModelCommon {
         Addables = GetAddables();
 
         DeleteParticipantCommand = new RelayCommand<dynamic>(obj => {
-            User u = obj.User;
-
             if (obj.Nb > 0) {
                 MessageBoxResult result = MessageBox
                     .Show("This participant has already " + obj.Nb + " vote(s) for this poll.\n" +
-                          "If you proceed ans save the poll, their vote(s) will be deleted.\nDo you confirm?",
+                          "If you proceed and save the poll, their vote(s) will be deleted.\nDo you confirm?",
                         "Confirmation", MessageBoxButton.YesNo);
                 if (result != MessageBoxResult.Yes) {
                     return;
                 }
             }
 
+            User u = obj.User;
             Participants.Remove(obj);
             Poll.Participants.Remove(u);
             Poll.Votes.Where(v => v.User == u).ToList().ForEach(v => {
@@ -250,13 +241,12 @@ public class PollVotesViewModel : ViewModelCommon {
     protected sealed override void OnRefreshData() {
         if (_isNew) return;
 
-        //Context.ChangeTracker.Clear(); -> supprime tous les votes de la db ?
-
         Poll = Context.Polls.First(p => p.Id == Poll.Id);
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
         Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
         Choices = Poll.Choices.OrderBy(c => c.Label).ToList();
+        ShowGrid = !NoParticipant && !NoChoice;
 
         /* -------------------------- Refresh Add/Edit -------------------------- */
 
@@ -270,6 +260,8 @@ public class PollVotesViewModel : ViewModelCommon {
 
         EditTitle = Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
+        _editedChoice = null;
+        NewChoice = "";
 
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;

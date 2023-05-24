@@ -8,10 +8,11 @@
         xmlns:vm="clr-namespace:MyPoll.ViewModel"
         xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="768" Width="1024" WindowStartupLocation="CenterScreen">
+        Title="{Binding Title}" Height="880" Width="1024" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
     <StackPanel>
         <StackPanel Orientation="Horizontal" Background="LightGray">
             <Button Content="Logout" Command="{Binding LogoutCommand}"
@@ -25,5 +26,6 @@
             </TabItem>
         </f:MyTabControl>
     </StackPanel>
+    </ScrollViewer>
 </f:WindowBase>
 

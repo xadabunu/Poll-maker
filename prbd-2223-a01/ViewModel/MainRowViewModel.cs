@@ -109,6 +109,8 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     protected override void OnRefreshData() {
-        _isClosed = Context.Polls.Find(_poll.Id).IsClosed;
+        var poll = Context.Polls.Find(_poll.Id);
+        if (poll != null)
+            _isClosed = poll.IsClosed;
     }
 }
