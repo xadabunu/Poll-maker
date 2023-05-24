@@ -23,13 +23,6 @@ public class User : EntityBase<MyPollContext> {
         set => value.Except(Context.Votes).ToList().ForEach(vote => Context.Add(vote));
     }
 
-    public User(int id, string name, string mail, string password) {
-        Id = id;
-        FullName = name;
-        Email = mail;
-        Password = password;
-    }
-
     public User() { }
 
     public void Save() {

@@ -17,7 +17,7 @@ public class MyPollContext : DbContextBase {
         optionsBuilder
             .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=prbd-2223-a01.db")
             //.UseSqlite("Data Source=prbd-2223-a01.db")
-            .LogTo(Console.WriteLine, LogLevel.Information)
+            //.LogTo(Console.WriteLine, LogLevel.Information)
             //.EnableSensitiveDataLogging()
             .UseLazyLoadingProxies(true);
     }
@@ -73,19 +73,19 @@ public class MyPollContext : DbContextBase {
     private static void SeedData(ModelBuilder modelBuilder) {
         modelBuilder.Entity<User>()
             .HasData(
-                new User(1, "Harry Covère", "harry@test.com", SecretHasher.Hash("harry")),
-                new User(2, "Mélusine Enfayite", "melusine@test.com", SecretHasher.Hash("melusine")),
-                new User(3, "John Deuf", "john@test.com", SecretHasher.Hash("john")),
-                new User(4, "Alain Terrieur", "alain@test.com", SecretHasher.Hash("alain")),
-                new User(5, "Camille Honnête", "camille@test.com", SecretHasher.Hash("camille")),
-                new User(6, "Jim Nastik", "jim@test.com", SecretHasher.Hash("jim")),
-                new User(7, "Mehdi Cament", "mehdi@test.com", SecretHasher.Hash("mehdi")),
-                new User(8, "Ali Gator", "ali@test.com", SecretHasher.Hash("ali"))
+                new User { Id = 1, FullName = "Harry Covère", Email = "harry@test.com", Password = SecretHasher.Hash("harry") },
+                new User { Id = 2, FullName = "Mélusine Enfayite", Email = "melusine@test.com", Password = SecretHasher.Hash("melusine") },
+                new User { Id = 3, FullName = "John Deuf", Email = "john@test.com", Password = SecretHasher.Hash("john") },
+                new User { Id = 4, FullName = "Alain Terrieur", Email = "alain@test.com", Password = SecretHasher.Hash("alain") },
+                new User { Id = 5, FullName = "Camille Honnête", Email = "camille@test.com", Password = SecretHasher.Hash("camille") },
+                new User { Id = 6, FullName = "Jim Nastik", Email = "jim@test.com", Password = SecretHasher.Hash("jim") },
+                new User { Id = 7, FullName = "Mehdi Cament", Email = "mehdi@test.com", Password = SecretHasher.Hash("mehdi") },
+                new User { Id = 8, FullName = "Ali Gator", Email = "ali@test.com", Password = SecretHasher.Hash("ali") }
             );
 
         modelBuilder.Entity<Administrator>()
             .HasData(
-                new Administrator(9, "Admin", "admin@test.com", SecretHasher.Hash("admin"))
+                new Administrator { Id = 9, FullName = "Admin", Email = "admin@test.com", Password = SecretHasher.Hash("admin") }
             );
 
         modelBuilder.Entity<Poll>()
@@ -95,7 +95,10 @@ public class MyPollContext : DbContextBase {
                 new Poll { Id = 3, Title = "Plus belle ville du monde ?", CreatorId = 1, Type = PollType.Simple },
                 new Poll { Id = 4, Title = "Meilleur animé japonais ?", CreatorId = 5 },
                 new Poll { Id = 5, Title = "Sport pratiqué", CreatorId = 3, Status = PollStatus.Closed },
-                new Poll { Id = 6, Title = "Langage informatique préféré", CreatorId = 7 }
+                new Poll { Id = 6, Title = "Langage informatique préféré", CreatorId = 7 },
+                new Poll {
+                    Id = 7, Title = "Temporary", CreatorId = 1
+                }
             );
 
         modelBuilder.Entity<Comment>()
