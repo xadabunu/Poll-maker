@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Castle.Components.DictionaryAdapter;
 using PRBD_Framework;
 
 namespace MyPoll.Model;
@@ -20,7 +19,6 @@ public class User : EntityBase<MyPollContext> {
     [NotMapped]
     public ICollection<Vote> Votes {
         get => Context.Votes.Where(v => v.User == this).ToList();
-        set => value.Except(Context.Votes).ToList().ForEach(vote => Context.Add(vote));
     }
 
     public User() { }

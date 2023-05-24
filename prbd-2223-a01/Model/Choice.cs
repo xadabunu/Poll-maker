@@ -16,15 +16,7 @@ public class Choice : EntityBase<MyPollContext> {
 
     public Choice() {}
 
-    public double Score {
-        get {
-            double score = 0;
-            foreach (var v in Votes) {
-                score += (double)v.Value / 2;
-            }
-            return score;
-        }
-    }
+    public double Score => Votes.Sum(v => (double)v.Value) / 2;
 
     public string LabelAndScore {
         get => Label + " (" + Score + ")";

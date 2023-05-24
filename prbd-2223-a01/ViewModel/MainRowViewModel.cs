@@ -1,7 +1,5 @@
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
 using MyPoll.Model;
-using MyPoll.View;
 using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
@@ -74,15 +72,10 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Save() {
-        CellsVM.ForEach(vm => {
-            if (vm.Vote.Value == VoteValue.ToRemove)
-                Context.Votes.Remove(vm.Vote);
-        });
-        CellsVM.ForEach(vm => {
-            if (vm.IsVoted && !Context.Votes.Contains(vm.Vote)) {
-                Context.Votes.Add(vm.Vote);
-            }
-        });
+        CellsVM.Where(vm => vm.Vote.Value == VoteValue.ToRemove)
+            .ToList().ForEach(vm => Context.Votes.Remove(vm.Vote));
+        CellsVM.Where(vm => vm.IsVoted && !Context.Votes.Contains(vm.Vote))
+            .ToList().ForEach(vm => Context.Votes.Add(vm.Vote));
 
         Context.SaveChanges();
         EditMode = false;
@@ -97,11 +90,8 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Delete() {
-        CellsVM.ForEach(vm => {
-            if (vm.Vote.Value != VoteValue.None)
-                Context.Votes.Remove(vm.Vote);
-        });
-        // Console.WriteLine(Context.ChangeTracker.DebugView.ShortView);
+        CellsVM.Where(vm => vm.Vote.Value != VoteValue.None)
+            .ToList().ForEach(vm => Context.Votes.Remove(vm.Vote));
 
         Context.SaveChanges();
         RefreshChoices();

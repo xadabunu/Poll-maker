@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.IdentityModel.Tokens;
 using MyPoll.Model;
 using PRBD_Framework;
@@ -107,9 +106,8 @@ public class PollVotesViewModel : ViewModelCommon {
             User u = obj.User;
             Participants.Remove(obj);
             Poll.Participants.Remove(u);
-            Poll.Votes.Where(v => v.User == u).ToList().ForEach(v => {
-                Context.Votes.Remove(v);
-            });
+            Poll.Votes.Where(v => v.User == u).ToList()
+                .ForEach(v => Context.Votes.Remove(v));
             NoParticipant = Participants.Count == 0;
             Addables = GetAddables();
         });

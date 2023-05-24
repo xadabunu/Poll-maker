@@ -1,8 +1,8 @@
-using System.Windows.Controls;
+using PRBD_Framework;
 
-namespace MyPoll.View; 
+namespace MyPoll.View;
 
-public partial class PollItemView : UserControl {
+public partial class PollItemView : UserControlBase {
     public PollItemView() {
         InitializeComponent();
     }

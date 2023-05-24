@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:MyPoll.View"
              xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
              xmlns:vm="clr-namespace:MyPoll.ViewModel"
-             xmlns:m="clr-namespace:MyPoll.Model"
              xmlns:prbdFramework="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d"
