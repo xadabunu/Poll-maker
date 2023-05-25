@@ -1,6 +1,4 @@
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using MyPoll.Model;
 using PRBD_Framework;
 
 namespace MyPoll.ViewModel;

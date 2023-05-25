@@ -89,8 +89,8 @@ public class PollVotesViewModel : ViewModelCommon {
         });
 
         Participants = GetParticipants();
-
         Addables = GetAddables();
+        EditChoices = GetEditChoices();
 
         DeleteParticipantCommand = new RelayCommand<dynamic>(obj => {
             if (obj.Nb > 0) {
@@ -111,8 +111,6 @@ public class PollVotesViewModel : ViewModelCommon {
             NoParticipant = Participants.Count == 0;
             Addables = GetAddables();
         });
-
-        EditChoices = GetEditChoices();
 
         EditChoiceCommand = new RelayCommand<dynamic>(obj => {
             _editedChoice = obj;
@@ -264,6 +262,7 @@ public class PollVotesViewModel : ViewModelCommon {
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
         IsChecked = Poll.Status == PollStatus.Closed;
+        RaisePropertyChanged(nameof(CanBeSingle));
 
         AskEditMode();
     }

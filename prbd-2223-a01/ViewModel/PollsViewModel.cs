@@ -52,7 +52,7 @@ public class PollsViewModel : ViewModelCommon {
         Polls = new ObservableCollection<Poll>(query);
     }
 
-    public string UnansweredColor => Poll.UnansweredColor;
-    public string AnsweredColor => Poll.AnsweredColor;
-    public string ClosedColor => Poll.ClosedColor;
+    public static string UnansweredColor => Poll.UnansweredColor;
+    public static string AnsweredColor => Poll.AnsweredColor;
+    public static string ClosedColor => Poll.ClosedColor;
 }

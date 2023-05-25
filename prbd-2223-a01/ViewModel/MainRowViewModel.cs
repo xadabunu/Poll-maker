@@ -13,10 +13,10 @@ public class MainRowViewModel : ViewModelCommon {
 
 
     public User Participant { get; set; }
-    private PollVotesViewModel _pollVotesViewModel;
+    private readonly PollVotesViewModel _pollVotesViewModel;
 
     private List<Choice> _choices;
-    public List<Choice> Choices => _choices.OrderBy(c => c.Label).ToList();
+    private List<Choice> Choices => _choices.OrderBy(c => c.Label).ToList();
     private Poll _poll;
     private bool _isClosed;
 
@@ -60,7 +60,7 @@ public class MainRowViewModel : ViewModelCommon {
         RaisePropertyChanged(nameof(Editable));
     }
 
-    public void ClearVotes(MainCellViewModel cellvm) {
+    public void ClearOtherVotes(MainCellViewModel cellvm) {
         CellsVM.Where(other => other != cellvm).ToList()
             .ForEach(vm => vm.ClearVote());
     }
@@ -84,7 +84,7 @@ public class MainRowViewModel : ViewModelCommon {
     }
 
     private void Cancel() {
-        Context.ChangeTracker.Clear();
+        CellsVM.ForEach(vm => vm.ReloadVote());
         RefreshChoices();
         EditMode = false;
     }

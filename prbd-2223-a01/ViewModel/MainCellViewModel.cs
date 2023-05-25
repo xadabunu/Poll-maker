@@ -27,7 +27,7 @@ public class MainCellViewModel : ViewModelCommon {
             };
             Vote.Value = Vote.Value == val ? VoteValue.ToRemove : val;
             if (choice.Poll.IsSimple && Vote.Value != VoteValue.ToRemove) {
-                mainRowViewModel.ClearVotes(this);
+                mainRowViewModel.ClearOtherVotes(this);
             }
             IsVoted = Vote.Value != VoteValue.None && Vote.Value != VoteValue.ToRemove;
             RaiseProperties();
@@ -64,6 +64,10 @@ public class MainCellViewModel : ViewModelCommon {
         if (Vote.Value != VoteValue.None)
             Vote.Value = VoteValue.ToRemove;
         RaiseProperties();
+    }
+
+    public void ReloadVote() {
+        Vote.Reload();
     }
 
     public EFontAwesomeIcon VotedIcon {
