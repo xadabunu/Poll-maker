@@ -161,7 +161,7 @@ public class PollVotesViewModel : ViewModelCommon {
             EditPollMode = false;
             ShowGrid = !NoParticipant && !NoChoice;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
-        }, () => ValidateTitle() && HasChanges);
+        }, () => ValidateTitle() && (_isNew || HasChanges));
     }
 
     private List<Choice> _choices;
