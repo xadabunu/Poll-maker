@@ -120,7 +120,7 @@ public class PollVotesViewModel : ViewModelCommon {
         AddChoiceCommand = new RelayCommand(() => {
             if (_editedChoice != null) {
                 EditChoices.Remove(_editedChoice);
-                Poll.Choices.First(ch => ch.Id == _editedChoice.Choice.Id).Label = NewChoice;
+                Poll.Choices.Single(ch => ch.Id == _editedChoice.Choice.Id).Label = NewChoice;
                 _editedChoice = null;
             } else {
                 NoChoice = false;
@@ -237,7 +237,7 @@ public class PollVotesViewModel : ViewModelCommon {
     protected sealed override void OnRefreshData() {
         if (_isNew) return;
 
-        Poll = Context.Polls.First(p => p.Id == Poll.Id);
+        Poll = Context.Polls.Find(Poll.Id);
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
         Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
@@ -248,7 +248,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
         Participants = GetParticipants();
 
-        ParticipantsVM = Participants.ToList()
+        ParticipantsVM = Participants
             .Select(p => new MainRowViewModel(this, Poll, p.User)).ToList();
 
         Addables = GetAddables();
