@@ -14,7 +14,9 @@ public partial class App : ApplicationBase<User, MyPollContext> {
         MSG_CANCEL_SIGNUP,
         MSG_LOGOUT,
         MSG_NEW_POLL,
-        MSG_POLL_DELETED
+        MSG_POLL_DELETED,
+        MSG_RENAME_TAB,
+        MSG_RETAG_TAB
     }
 
     protected override void OnStartup(StartupEventArgs e) {

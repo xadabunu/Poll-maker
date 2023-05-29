@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PRBD_Framework; 
+namespace PRBD_Framework;
 
 public class MyTabControl : TabControl, IDisposable {
     public TabItem Add(ContentControl content, string header, object tag = null) {
@@ -51,7 +51,7 @@ public class MyTabControl : TabControl, IDisposable {
 
     private void CloseTab(TabItem tab) {
         if (tab == null) return;
-            
+
         if (IsTabDirty(tab))
             DisplayChangeTabError();
         else
@@ -74,6 +74,14 @@ public class MyTabControl : TabControl, IDisposable {
         else
             tab.Header = newName;
         tab.Tag = newName;
+    }
+
+    public static void RenameTag(TabItem tab, string newTag) {
+        tab.Tag = newTag;
+    }
+
+    public static void RenameHeader(TabItem tab, string newHeader) {
+        tab.Header = newHeader;
     }
 
     private static void Dispose(IEnumerable<TabItem> tabs) {

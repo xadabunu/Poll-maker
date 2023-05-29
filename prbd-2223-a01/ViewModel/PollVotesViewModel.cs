@@ -9,6 +9,8 @@ namespace MyPoll.ViewModel;
 
 public class PollVotesViewModel : ViewModelCommon {
 
+    static void p(string s) => Console.WriteLine(s);
+
     public ICommand EditPollCommand { get; }
     public ICommand AddCommentCommand { get; }
     public ICommand PostCommand { get; }
@@ -24,9 +26,9 @@ public class PollVotesViewModel : ViewModelCommon {
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
 
-        var participants = poll.Participants.OrderBy(p => p.FullName);
+        GetParticipants();
 
-        _participantsVM = participants.Select(p => new MainRowViewModel(this, Poll, p)).ToList();
+        ParticipantsVM = Participants.Select(p => new MainRowViewModel(this, Poll, p.User)).ToList();
         EditPollCommand = new RelayCommand(() => {
             EditPollMode = true;
             ShowGrid = false;
@@ -88,9 +90,8 @@ public class PollVotesViewModel : ViewModelCommon {
             EditPollMode = false;
         });
 
-        Participants = GetParticipants();
-        Addables = GetAddables();
-        EditChoices = GetEditChoices();
+        GetAddables();
+        GetEditChoices();
 
         DeleteParticipantCommand = new RelayCommand<dynamic>(obj => {
             if (obj.Nb > 0) {
@@ -109,7 +110,7 @@ public class PollVotesViewModel : ViewModelCommon {
             Poll.Votes.Where(v => v.User == u).ToList()
                 .ForEach(v => Context.Votes.Remove(v));
             NoParticipant = Participants.Count == 0;
-            Addables = GetAddables();
+            GetAddables();
         });
 
         EditChoiceCommand = new RelayCommand<dynamic>(obj => {
@@ -126,7 +127,7 @@ public class PollVotesViewModel : ViewModelCommon {
                 NoChoice = false;
                 Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
             }
-            EditChoices = GetEditChoices();
+            GetEditChoices();
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
 
@@ -155,11 +156,14 @@ public class PollVotesViewModel : ViewModelCommon {
             Addables.ToList().ForEach(u => AddParticipantAction(u)));
 
         SaveCommand = new RelayCommand(() => {
-            if (_isNew)
+            if (_isNew) {
                 Context.Polls.Add(Poll);
-            Context.SaveChanges();
+                Context.SaveChanges();
+                NotifyColleagues(App.Messages.MSG_RETAG_TAB, Poll);
+                _isNew = false;
+            } else
+                Context.SaveChanges();
             EditPollMode = false;
-            ShowGrid = !NoParticipant && !NoChoice;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         }, () => ValidateTitle() && (_isNew || HasChanges));
     }
@@ -167,16 +171,15 @@ public class PollVotesViewModel : ViewModelCommon {
     private List<Choice> _choices;
     public List<Choice> Choices {
         get => _choices;
-        set => SetProperty(ref _choices, value);
+        private set => SetProperty(ref _choices, value);
     }
 
     public Poll Poll { get; set; }
 
     private List<MainRowViewModel> _participantsVM;
-
     public List<MainRowViewModel> ParticipantsVM {
         get => _participantsVM;
-        set => SetProperty(ref _participantsVM, value);
+        private set => SetProperty(ref _participantsVM, value);
     }
 
     public void AskEditMode() {
@@ -242,19 +245,18 @@ public class PollVotesViewModel : ViewModelCommon {
         CanComment = !IsClosed;
         Comments = new ObservableCollection<Comment>(Poll.Comments.OrderByDescending(c => c.CreationDate));
         Choices = Poll.Choices.OrderBy(c => c.Label).ToList();
-        ShowGrid = !NoParticipant && !NoChoice;
-
-        /* -------------------------- Refresh Add/Edit -------------------------- */
-
-        Participants = GetParticipants();
-
+        ShowGrid = !EditPollMode && !NoParticipant && !NoChoice;
+        GetParticipants();
         ParticipantsVM = Participants
             .Select(p => new MainRowViewModel(this, Poll, p.User)).ToList();
 
-        Addables = GetAddables();
-        EditChoices = GetEditChoices();
+        /* -------------------------- Refresh Add/Edit -------------------------- */
+
+        GetAddables();
+        GetEditChoices();
 
         EditTitle = Poll.Title;
+        NotifyColleagues(App.Messages.MSG_RENAME_TAB, Poll);
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
         _editedChoice = null;
         NewChoice = "";
@@ -263,6 +265,7 @@ public class PollVotesViewModel : ViewModelCommon {
         NoParticipant = Poll.Participants.Count == 0;
         IsChecked = Poll.Status == PollStatus.Closed;
         RaisePropertyChanged(nameof(CanBeSingle));
+        RaisePropertyChanged();
 
         AskEditMode();
     }
@@ -354,7 +357,7 @@ public class PollVotesViewModel : ViewModelCommon {
         set => SetProperty(ref _editTitle, value, () => ValidateTitle());
     }
 
-    private  bool ValidateTitle() {
+    private bool ValidateTitle() {
         ClearErrors();
 
         if (EditTitle.IsNullOrEmpty())
@@ -365,7 +368,6 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         else {
             Poll.Title = EditTitle;
-            //return HasChanges;
         }
 
         return !HasErrors;
@@ -374,27 +376,27 @@ public class PollVotesViewModel : ViewModelCommon {
     private void AddParticipantAction(User user) {
         NoParticipant = false;
         Poll.Participants.Add(user);
-        Participants = GetParticipants();
+        GetParticipants();
         Addables.Remove(user);
     }
 
-    private ObservableCollection<dynamic> GetParticipants() {
-        return new ObservableCollection<dynamic>(Poll.Participants.OrderBy(p => p.FullName)
+    private void GetParticipants() {
+        Participants = new ObservableCollection<dynamic>(Poll.Participants.OrderBy(p => p.FullName)
             .Select(user => new {User = user, Nb = GetUserVotesNb(user)}));
     }
 
-    private ObservableCollection<dynamic> GetEditChoices() {
-        return new ObservableCollection<dynamic>(Poll.Choices.OrderBy(ch => ch.Label)
+    private void GetEditChoices() {
+        EditChoices = new ObservableCollection<dynamic>(Poll.Choices.OrderBy(ch => ch.Label)
             .Select(ch => new {Choice = ch, Nb = GetChoiceVotesNb(ch)}));
     }
 
-    private ObservableCollection<User> GetAddables() {
-        return new ObservableCollection<User>(Context.Users.Where(u => !Poll.Participants.Contains(u)).OrderBy(u => u.FullName));
+    private void GetAddables() {
+        Addables = new ObservableCollection<User>(Context.Users.Where(u => !Poll.Participants.Contains(u)).OrderBy(u => u.FullName));
     }
 
-    private int GetUserVotesNb(User user) => Poll.Votes.Where(v => v.User == user).Count();
+    private int GetUserVotesNb(User user) => Poll.Votes.Count(v => v.User == user);
 
-    private int GetChoiceVotesNb(Choice choice) => Poll.Votes.Where(v => v.Choice == choice).Count();
+    private int GetChoiceVotesNb(Choice choice) => Poll.Votes.Count(v => v.Choice == choice);
 
     public bool CanBeSingle => !Poll.Votes.GroupBy(v => v.User).Any(elem => elem.Count() > 1);
 }
