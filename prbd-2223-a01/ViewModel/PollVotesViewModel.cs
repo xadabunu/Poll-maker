@@ -71,7 +71,7 @@ public class PollVotesViewModel : ViewModelCommon {
 
         /* ------------------ Constr Add/Edit part ------------------ */
 
-        EditTitle = Poll.Title;
+        EditTitle = _isNew ? "" : Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
         NoChoice = Poll.Choices.Count == 0;
         NoParticipant = Poll.Participants.Count == 0;
@@ -238,7 +238,7 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     protected sealed override void OnRefreshData() {
-        if (_isNew) return;
+        //if (_isNew) return;
 
         Poll = Context.Polls.Find(Poll.Id);
         IsClosed = Poll.IsClosed;
@@ -362,12 +362,16 @@ public class PollVotesViewModel : ViewModelCommon {
 
         if (EditTitle.IsNullOrEmpty())
             AddError(nameof(EditTitle), "Title required");
-        else if (EditTitle.Length < 7)
-            AddError(nameof(EditTitle), "Title length must be at least 7 char");
+        else if (EditTitle.Length < 10)
+            AddError(nameof(EditTitle), "Title length must be at least 10 char");
         else if (EditTitle == Poll.NEW_POLL_LABEL)
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         else {
-            Poll.Title = EditTitle;
+            Poll poll = Context.Polls.FirstOrDefault(p => p.Title == EditTitle);
+            if (poll != null)
+                AddError(nameof(EditTitle), "This poll already exists, it was created by " + poll.Creator.FullName);
+            else
+                Poll.Title = EditTitle;
         }
 
         return !HasErrors;
