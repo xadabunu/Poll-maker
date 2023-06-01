@@ -95,10 +95,7 @@ public class MyPollContext : DbContextBase {
                 new Poll { Id = 3, Title = "Plus belle ville du monde ?", CreatorId = 1, Type = PollType.Simple },
                 new Poll { Id = 4, Title = "Meilleur animé japonais ?", CreatorId = 5 },
                 new Poll { Id = 5, Title = "Sport pratiqué", CreatorId = 3, Status = PollStatus.Closed },
-                new Poll { Id = 6, Title = "Langage informatique préféré", CreatorId = 7 },
-                new Poll {
-                    Id = 7, Title = "Temporary", CreatorId = 1
-                }
+                new Poll { Id = 6, Title = "Langage informatique préféré", CreatorId = 7 }
             );
 
         modelBuilder.Entity<Comment>()

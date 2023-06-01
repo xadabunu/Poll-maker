@@ -4,7 +4,7 @@
 
 ### Liste des bugs connus
 
-  * Aucun bug connu
+  * Lors de la création d'un nouveau poll, le message d'erreur "titre requis" est directement indiqué
 
 ### Liste des fonctionnalités supplémentaires
 
