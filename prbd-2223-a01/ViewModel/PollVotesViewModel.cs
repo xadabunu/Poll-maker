@@ -14,6 +14,7 @@ public class PollVotesViewModel : ViewModelCommon {
     public ICommand EditPollCommand { get; }
     public ICommand AddCommentCommand { get; }
     public ICommand PostCommand { get; }
+    public ICommand CancelCommentCommand { get; }
     public ICommand DeleteCommentCommand { get; }
     public ICommand OpenPollCommand { get; }
     public ICommand DeletePollCommand { get; }
@@ -40,6 +41,11 @@ public class PollVotesViewModel : ViewModelCommon {
         });
         PostCommand = new RelayCommand(() => PostAction(),
             () => !Comment.IsNullOrEmpty());
+        CancelCommentCommand = new RelayCommand(() => {
+            Comment = "";
+            WritingMode = false;
+            CanComment = true;
+        });
 
         Choices = Poll.Choices.OrderBy(c => c.Label).ToList();
 
@@ -155,6 +161,7 @@ public class PollVotesViewModel : ViewModelCommon {
             } else
                 Context.SaveChanges();
             EditPollMode = false;
+            CanEdit = true;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         }, () => ValidateTitle() && NoEditingChoice && (_isNew || HasChanges));
     }
@@ -165,7 +172,7 @@ public class PollVotesViewModel : ViewModelCommon {
         private set => SetProperty(ref _choices, value);
     }
 
-    public Poll Poll { get; set; }
+    public Poll Poll { get; private set; }
 
     private List<MainRowViewModel> _participantsVM;
     public List<MainRowViewModel> ParticipantsVM {
@@ -293,6 +300,7 @@ public class PollVotesViewModel : ViewModelCommon {
         private set => SetProperty(ref _editChoices, value);
     }
 
+    private bool _isChecked;
     public bool IsChecked {
         get => _isChecked;
         set {
@@ -302,7 +310,6 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     private User _added;
-    private bool _isChecked;
     private bool _isNew;
     private bool _noChoice;
     public bool NoChoice {

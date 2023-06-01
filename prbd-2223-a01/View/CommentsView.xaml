@@ -29,9 +29,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
-                     Margin="5" Height="50"/>
-            <Button Grid.Column="1" Content="Post" Margin="5" Padding="5" VerticalAlignment="Top"
-                    Command="{Binding PostCommand}" DockPanel.Dock="Right"/>
+                     Margin="5 2 5 5" Height="56"/>
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+            <Button Content="Post" Margin="0 2 5 2" Padding="2" VerticalAlignment="Top"
+                    Command="{Binding PostCommand}" Height="25"/>
+            <Button Content="Cancel" Margin="0 2 5 2" Padding="2" VerticalAlignment="Top"
+                    Command="{Binding CancelCommentCommand}" Height="25"/>
+            </StackPanel>
         </Grid>
 
         <ItemsControl ItemsSource="{Binding Comments}" Margin="0 0 0 10">
