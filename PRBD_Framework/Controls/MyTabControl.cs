@@ -81,7 +81,10 @@ public class MyTabControl : TabControl, IDisposable {
     }
 
     public static void RenameHeader(TabItem tab, string newHeader) {
-        tab.Header = newHeader;
+        if (tab.Header is StackPanel stackPanel)
+            ((TextBlock)stackPanel.Children[0]).Text = newHeader;
+        else
+            tab.Header = newHeader;
     }
 
     private static void Dispose(IEnumerable<TabItem> tabs) {

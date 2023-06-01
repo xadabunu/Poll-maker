@@ -25,6 +25,7 @@ public class PollVotesViewModel : ViewModelCommon {
         EditPollMode = _isNew;
         IsClosed = Poll.IsClosed;
         CanComment = !IsClosed;
+        CanEdit = IsCreator && !EditPollMode;
 
         GetParticipants();
 
@@ -86,8 +87,9 @@ public class PollVotesViewModel : ViewModelCommon {
             }
 
             App.ClearContext();
-            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
             EditPollMode = false;
+            CanEdit = true;
+            NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
         });
 
         GetAddables();
@@ -113,9 +115,9 @@ public class PollVotesViewModel : ViewModelCommon {
             GetAddables();
         });
 
-        EditChoiceCommand = new RelayCommand<dynamic>(obj => {
-            _editedChoice = obj;
-            NewChoice = obj.Choice.Label;
+        EditChoiceCommand = new RelayCommand<EditChoiceViewModel>(vm => {
+            _editedChoice = vm.Choice;
+            NewChoice = vm.Choice.Label;
         });
 
         AddChoiceCommand = new RelayCommand(() => {
@@ -125,24 +127,24 @@ public class PollVotesViewModel : ViewModelCommon {
                 _editedChoice = null;
             } else {
                 NoChoice = false;
-                Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice });
+                Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice.Trim() });
             }
             GetEditChoices();
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
 
-        DeleteChoiceCommand = new RelayCommand<dynamic>(obj => {
-            if (obj.Nb > 0) {
+        DeleteChoiceCommand = new RelayCommand<EditChoiceViewModel>(vm => {
+            if (vm.Nb > 0) {
                 MessageBoxResult result = MessageBox
-                    .Show("This choice has already " + obj.Nb + " vote(s).\n" +
+                    .Show("This choice has already " + vm.Nb + " vote(s).\n" +
                           "If you proceed ans save the poll, the corresponding vote(s) will be deleted.\nDo you confirm?",
                         "Confirmation", MessageBoxButton.YesNo);
                 if (result != MessageBoxResult.Yes) {
                     return;
                 }
             }
-            EditChoices.Remove(obj);
-            Poll.Choices.Remove(obj.Choice);
+            EditChoices.Remove(vm);
+            Poll.Choices.Remove(vm.Choice);
             NoChoice = EditChoices.Count == 0;
         });
 
@@ -194,7 +196,11 @@ public class PollVotesViewModel : ViewModelCommon {
         set => SetProperty(ref _isClosed, value);
     }
 
-    public bool CanEdit => IsCreator && !EditPollMode;
+    private bool _canEdit;
+    public bool CanEdit {
+        get => _canEdit;
+        set => SetProperty(ref _canEdit, value);
+    }
 
     private bool _writingMode;
     public bool WritingMode {
@@ -238,7 +244,7 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     protected sealed override void OnRefreshData() {
-        //if (_isNew) return;
+        if (_isNew) return;
 
         Poll = Context.Polls.Find(Poll.Id);
         IsClosed = Poll.IsClosed;
@@ -294,8 +300,8 @@ public class PollVotesViewModel : ViewModelCommon {
         private set => SetProperty(ref _addables, value);
     }
 
-    private ObservableCollection<dynamic> _editChoices;
-    public ObservableCollection<dynamic> EditChoices {
+    private ObservableCollection<EditChoiceViewModel> _editChoices;
+    public ObservableCollection<EditChoiceViewModel> EditChoices {
         get => _editChoices;
         private set => SetProperty(ref _editChoices, value);
     }
@@ -343,7 +349,7 @@ public class PollVotesViewModel : ViewModelCommon {
     private string _newChoice;
     public string NewChoice {
         get => _newChoice;
-        set => SetProperty(ref _newChoice, value.Trim());
+        set => SetProperty(ref _newChoice, value);
     }
 
     public bool EditPollMode {
@@ -368,7 +374,7 @@ public class PollVotesViewModel : ViewModelCommon {
             AddError(nameof(EditTitle), "Sorry, this name is reserved :/");
         else {
             Poll poll = Context.Polls.FirstOrDefault(p => p.Title == EditTitle);
-            if (poll != null)
+            if (poll != null && poll.Creator != Poll.Creator)
                 AddError(nameof(EditTitle), "This poll already exists, it was created by " + poll.Creator.FullName);
             else
                 Poll.Title = EditTitle;
@@ -390,8 +396,8 @@ public class PollVotesViewModel : ViewModelCommon {
     }
 
     private void GetEditChoices() {
-        EditChoices = new ObservableCollection<dynamic>(Poll.Choices.OrderBy(ch => ch.Label)
-            .Select(ch => new {Choice = ch, Nb = GetChoiceVotesNb(ch)}));
+        EditChoices = new ObservableCollection<EditChoiceViewModel>(Poll.Choices.OrderBy(ch => ch.Label)
+            .Select(ch => new EditChoiceViewModel(ch, GetChoiceVotesNb(ch))));
     }
 
     private void GetAddables() {
