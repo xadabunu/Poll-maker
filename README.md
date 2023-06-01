@@ -4,10 +4,13 @@
 
 ### Liste des bugs connus
 
-  * bug 1
-  * bug 2
-  * ...
+  * Aucun bug connu
 
 ### Liste des fonctionnalités supplémentaires
 
+  * Aucune
+
 ### Divers
+
+  * La classe PollVotesViewModel pourrait être subdivisé en différents vm (par exemple: un pour l'affichage des votes
+    et un pour l'édition d'un poll) afin de ne pas avoir une classe unique ayant autant de responsabilités.
