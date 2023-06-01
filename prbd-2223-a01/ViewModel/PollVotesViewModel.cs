@@ -116,14 +116,8 @@ public class PollVotesViewModel : ViewModelCommon {
         });
 
         AddChoiceCommand = new RelayCommand(() => {
-            if (_editedChoice != null) {
-                EditChoices.Remove(_editedChoice);
-                Poll.Choices.Single(ch => ch.Id == _editedChoice.Choice.Id).Label = NewChoice;
-                _editedChoice = null;
-            } else {
-                NoChoice = false;
-                Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice.Trim() });
-            }
+            NoChoice = false;
+            Poll.Choices.Add(new Choice { PollId = Poll.Id, Label = NewChoice.Trim() });
             GetEditChoices();
             NewChoice = "";
         }, () => !NewChoice.IsNullOrEmpty());
@@ -259,7 +253,6 @@ public class PollVotesViewModel : ViewModelCommon {
         EditTitle = Poll.Title;
         NotifyColleagues(App.Messages.MSG_RENAME_TAB, Poll);
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
-        _editedChoice = null;
         NewChoice = "";
 
         NoChoice = Poll.Choices.Count == 0;
@@ -300,12 +293,6 @@ public class PollVotesViewModel : ViewModelCommon {
         private set => SetProperty(ref _editChoices, value);
     }
 
-    private User _added;
-    private dynamic _editedChoice;
-
-    private bool _isChecked;
-    private bool _isNew;
-
     public bool IsChecked {
         get => _isChecked;
         set {
@@ -314,6 +301,9 @@ public class PollVotesViewModel : ViewModelCommon {
         }
     }
 
+    private User _added;
+    private bool _isChecked;
+    private bool _isNew;
     private bool _noChoice;
     public bool NoChoice {
         get => _noChoice;
