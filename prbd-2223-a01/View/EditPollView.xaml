@@ -62,9 +62,9 @@
 
             <Label Content="Participants" FontWeight="Bold" FontSize="13"/>
             <Label Grid.Column="0" Grid.Row="1" Content="No participant yet"
-                   Foreground="Red" FontWeight="Bold"
+                   Foreground="Red" FontWeight="Bold" Margin="2"
                    Visibility="{c:Binding NoParticipant}"/>
-            <Border Grid.Column="0" Grid.Row="1" Margin="5"
+            <Border Grid.Column="0" Grid.Row="1" Margin="5" Padding="2"
                     Visibility="{c:Binding !NoParticipant}"
                     BorderThickness="1" BorderBrush="Black">
                 <ItemsControl ItemsSource="{Binding Participants}">
@@ -91,7 +91,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Border>
-            <Grid Grid.Row="2">
+            <Grid Grid.Column="0" Grid.Row="2" Margin="0 0 5 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -106,7 +106,7 @@
                         Command="{Binding AddParticipantCommand}"
                         CommandParameter="{Binding Added}"/>
             </Grid>
-            <StackPanel Grid.Row="3"
+            <StackPanel Grid.Column="0" Grid.Row="3"
                         Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Add My Self" VerticalAlignment="Center"
                         Margin="5" Padding="2" Command="{Binding AddMySelfCommand}"/>
@@ -114,11 +114,11 @@
                         Margin="5" Padding="2" Command="{Binding AddEverybodyCommand}"/>
             </StackPanel>
 
-            <Label Grid.Column="1" Content="Choices"  FontWeight="Bold" FontSize="13"/>
-            <Label Content="No choice yet!" Foreground="Red" FontWeight="Bold"
+            <Label Grid.Row="0" Grid.Column="1" Content="Choices"  FontWeight="Bold" FontSize="13"/>
+            <Label Content="No choice yet!" Foreground="Red" FontWeight="Bold" Margin="2"
                    Grid.Column="1" Grid.Row="1" Visibility="{c:Binding NoChoice}"/>
             <Border Grid.Column="1" Grid.Row="1" Margin="5" Visibility="{c:Binding !NoChoice}"
-                    BorderThickness="1" BorderBrush="Black">
+                    BorderThickness="1" BorderBrush="Black" Padding="2">
                 <ItemsControl ItemsSource="{Binding EditChoices}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -128,28 +128,36 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock TextWrapping="WrapWithOverflow" Margin="5">
-                                    <Run Text="{Binding Choice.Label, Mode=OneWay}"/>
-                                    <Run Text=" ("/>
-                                    <Run Text="{Binding Nb, Mode=OneWay}"/>
-                                    <Run Text=")"/>
-                                </TextBlock>
+                                <TextBox TextWrapping="WrapWithOverflow" Margin="5"
+                                         Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                                         BorderBrush="{Binding BorderBrush}"
+                                         IsHitTestVisible="{c:Binding EditMode}"/>
                                 <Button Grid.Column="1" HorizontalAlignment="Right"
                                         fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black"
                                         BorderBrush="Transparent" Background="Transparent"
-                                        Command="{Binding DataContext.EditChoiceCommand, ElementName=view}"
+                                        Visibility="{c:Binding !EditMode}"
+                                        Command="{Binding StartEditCommand}"
                                         CommandParameter="{Binding}"/>
                                 <Button Grid.Column="2" HorizontalAlignment="Right"
                                         fap:FontAwesome.Icon="Regular_TrashCan" Foreground="Red"
                                         BorderBrush="Transparent" Background="Transparent"
+                                        Visibility="{c:Binding !EditMode}"
                                         Command="{Binding DataContext.DeleteChoiceCommand, ElementName=view}"
                                         CommandParameter="{Binding}"/>
+                                <Button Grid.Column="1" fap:FontAwesome.Icon="Solid_FloppyDisk" Foreground="Green"
+                                        BorderBrush="Transparent" Background="Transparent"
+                                        Visibility="{c:Binding EditMode}"
+                                        Command="{Binding UpdateChoiceCommand}"/>
+                                <Button Grid.Column="2" fap:FontAwesome.Icon="Solid_X" Foreground="Red"
+                                        BorderBrush="Transparent" Background="Transparent"
+                                        Visibility="{c:Binding EditMode}"
+                                        Command="{Binding CancelEditCommand}"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Border>
-            <Grid Grid.Column="1" Grid.Row="2">
+            <Grid Grid.Column="1" Grid.Row="2" Margin="0 0 5 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>

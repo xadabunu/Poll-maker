@@ -70,7 +70,7 @@ public class PollVotesViewModel : ViewModelCommon {
             }
         });
 
-        /* ------------------ Constr Add/Edit part ------------------ */
+        /* ------------------ partie Add/Edit du constructeur ------------------ */
 
         EditTitle = _isNew ? "" : Poll.Title;
         EditType = Poll.Type == PollType.Multiple ? 0 : 1;
@@ -113,11 +113,6 @@ public class PollVotesViewModel : ViewModelCommon {
                 .ForEach(v => Context.Votes.Remove(v));
             NoParticipant = Participants.Count == 0;
             GetAddables();
-        });
-
-        EditChoiceCommand = new RelayCommand<EditChoiceViewModel>(vm => {
-            _editedChoice = vm.Choice;
-            NewChoice = vm.Choice.Label;
         });
 
         AddChoiceCommand = new RelayCommand(() => {
@@ -167,7 +162,7 @@ public class PollVotesViewModel : ViewModelCommon {
                 Context.SaveChanges();
             EditPollMode = false;
             NotifyColleagues(ApplicationBaseMessages.MSG_REFRESH_DATA);
-        }, () => ValidateTitle() && (_isNew || HasChanges));
+        }, () => ValidateTitle() && NoEditingChoice && (_isNew || HasChanges));
     }
 
     private List<Choice> _choices;
@@ -256,7 +251,7 @@ public class PollVotesViewModel : ViewModelCommon {
         ParticipantsVM = Participants
             .Select(p => new MainRowViewModel(this, Poll, p.User)).ToList();
 
-        /* -------------------------- Refresh Add/Edit -------------------------- */
+        /* -------------------------- partie Add/Edit du refresh -------------------------- */
 
         GetAddables();
         GetEditChoices();
@@ -276,12 +271,11 @@ public class PollVotesViewModel : ViewModelCommon {
         AskEditMode();
     }
 
-    /* -------------------------- Class Add/Edit -------------------------- */
+    /* -------------------------- partie Add/Edit des attributs -------------------------- */
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
     public ICommand DeleteParticipantCommand { get; }
-    public ICommand EditChoiceCommand { get; }
     public ICommand DeleteChoiceCommand { get; }
     public ICommand AddChoiceCommand { get; }
     public ICommand AddParticipantCommand { get; }
@@ -409,4 +403,6 @@ public class PollVotesViewModel : ViewModelCommon {
     private int GetChoiceVotesNb(Choice choice) => Poll.Votes.Count(v => v.Choice == choice);
 
     public bool CanBeSingle => !Poll.Votes.GroupBy(v => v.User).Any(elem => elem.Count() > 1);
+
+    private bool NoEditingChoice => !EditChoices.Any(vm => vm.EditMode);
 }
