@@ -9,8 +9,6 @@ namespace MyPoll.ViewModel;
 
 public class PollVotesViewModel : ViewModelCommon {
 
-    static void p(string s) => Console.WriteLine(s);
-
     public ICommand EditPollCommand { get; }
     public ICommand AddCommentCommand { get; }
     public ICommand PostCommand { get; }
